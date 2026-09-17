@@ -1,5 +1,6 @@
 from fastapi import FastAPI
 from fastapi.middleware.cors import CORSMiddleware
+from app.api.endpoints import auth, projects, metrics
 
 app = FastAPI(
     title="Darukaa.Earth API",
@@ -15,6 +16,10 @@ app.add_middleware(
     allow_methods=["*"],
     allow_headers=["*"],
 )
+
+app.include_router(auth.router, prefix="/api/auth", tags=["auth"])
+app.include_router(projects.router, prefix="/api/projects", tags=["projects"])
+app.include_router(metrics.router, prefix="/api/metrics", tags=["metrics"])
 
 @app.get("/health")
 def health_check():
