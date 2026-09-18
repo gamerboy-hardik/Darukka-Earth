@@ -415,7 +415,7 @@ export default function Dashboard() {
                     <Map
                       {...modalViewState}
                       onMove={evt => setModalViewState(evt.viewState)}
-                      mapStyle="mapbox://styles/mapbox/satellite-v9"
+                      mapStyle="mapbox://styles/mapbox/satellite-streets-v12"
                       mapboxAccessToken={MAPBOX_TOKEN}
                       style={{ cursor: 'crosshair' }}
                     >
