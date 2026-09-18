@@ -7,7 +7,7 @@ psycopg2-binary
 pydantic
 pydantic-settings
 python-jose[cryptography]
-passlib[bcrypt]
+bcrypt
 pytest
 pytest-asyncio
 httpx
