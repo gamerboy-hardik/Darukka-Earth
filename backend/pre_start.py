@@ -13,8 +13,7 @@ def init() -> None:
             connection.execute(text("CREATE EXTENSION IF NOT EXISTS postgis;"))
             logger.info("Successfully enabled PostGIS extension.")
     except Exception as e:
-        logger.error(f"Error enabling PostGIS: {e}")
-        raise e
+        logger.warning(f"Error enabling PostGIS (this is normal if you lack superuser privileges and it's already enabled): {e}")
 
 if __name__ == "__main__":
     init()
