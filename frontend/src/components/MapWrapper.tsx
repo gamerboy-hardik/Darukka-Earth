@@ -54,9 +54,10 @@ interface MapWrapperProps {
   projects?: any[];
   clickedProject?: any;
   setClickedProject?: (p: any) => void;
+  onEdit?: (p: any) => void;
 }
 
-export default function MapWrapper({ projects = [], clickedProject = null, setClickedProject = () => {} }: MapWrapperProps) {
+export default function MapWrapper({ projects = [], clickedProject = null, setClickedProject = () => {}, onEdit = () => {} }: MapWrapperProps) {
   const mapRef = React.useRef<any>(null);
   const [viewState, setViewState] = useState({
     longitude: 78.9629,
@@ -394,11 +395,13 @@ export default function MapWrapper({ projects = [], clickedProject = null, setCl
                 Full Analytics
               </button>
               <button 
-                onClick={() => alert(`Edit mode for ${clickedProject.name} opened. (In MVP, this opens full project settings)`)}
+                onClick={() => {
+                  if (onEdit) onEdit(clickedProject);
+                }}
                 className="btn btn-outline-primary"
                 style={{ fontWeight: 600, padding: '10px 16px', borderRadius: '10px' }}
               >
-                <i className="fa fa-pencil mr-2"></i> Edit Details
+                <i className="fa fa-edit mr-2"></i> Edit Details
               </button>
             </div>
           </motion.div>

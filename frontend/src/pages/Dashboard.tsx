@@ -297,6 +297,7 @@ export default function Dashboard() {
             projects={projects} 
             clickedProject={clickedProject}
             setClickedProject={setClickedProject}
+            onEdit={openEditModal}
           />
         </div>
 
