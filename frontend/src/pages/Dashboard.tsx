@@ -541,13 +541,22 @@ function ProjectGridCard({ project, idx, setClickedProject, onDelete }: { projec
       {/* Image */}
       <div style={{ height: '140px', background: `url(${img}) center/cover`, position: 'relative' }}>
         <div style={{ padding: '12px', display: 'flex', justifyContent: 'space-between', alignItems: 'flex-start' }}>
-          <button 
-            onClick={(e) => { e.stopPropagation(); onDelete(); }}
-            style={{ width: '28px', height: '28px', background: 'rgba(255, 255, 255, 0.9)', border: 'none', borderRadius: '50%', display: 'flex', alignItems: 'center', justifyContent: 'center', cursor: 'pointer', boxShadow: '0 2px 4px rgba(0,0,0,0.1)', color: '#EF4444' }}
-            title="Delete Project"
-          >
-            <i className="fa fa-trash" style={{ fontSize: '12px' }}></i>
-          </button>
+          <div style={{ display: 'flex', gap: '8px' }}>
+            <button 
+              onClick={(e) => { e.stopPropagation(); alert(`Edit mode for ${project.name} opened.`); }}
+              style={{ width: '28px', height: '28px', background: 'rgba(255, 255, 255, 0.9)', border: 'none', borderRadius: '50%', display: 'flex', alignItems: 'center', justifyContent: 'center', cursor: 'pointer', boxShadow: '0 2px 4px rgba(0,0,0,0.1)', color: '#3B82F6' }}
+              title="Edit Project Details"
+            >
+              <i className="fa fa-pencil" style={{ fontSize: '12px' }}></i>
+            </button>
+            <button 
+              onClick={(e) => { e.stopPropagation(); onDelete(); }}
+              style={{ width: '28px', height: '28px', background: 'rgba(255, 255, 255, 0.9)', border: 'none', borderRadius: '50%', display: 'flex', alignItems: 'center', justifyContent: 'center', cursor: 'pointer', boxShadow: '0 2px 4px rgba(0,0,0,0.1)', color: '#EF4444' }}
+              title="Delete Project"
+            >
+              <i className="fa fa-trash" style={{ fontSize: '12px' }}></i>
+            </button>
+          </div>
           <span style={{ background: '#111827', color: typeColor, fontSize: '10px', fontWeight: 800, padding: '4px 10px', borderRadius: '20px', textTransform: 'uppercase', letterSpacing: '0.5px' }}>
             {project.project_type}
           </span>
@@ -607,13 +616,22 @@ function ProjectListCard({ project, idx, setClickedProject, onDelete }: { projec
     >
       <img src={img} alt={project.name} style={{ width: '130px', objectFit: 'cover', flexShrink: 0 }} />
       <div style={{ padding: '14px 16px', flex: 1, position: 'relative' }}>
-        <button 
-          onClick={(e) => { e.stopPropagation(); onDelete(); }}
-          style={{ position: 'absolute', right: '16px', bottom: '16px', width: '32px', height: '32px', background: '#FEF2F2', border: '1px solid #FEE2E2', borderRadius: '8px', display: 'flex', alignItems: 'center', justifyContent: 'center', cursor: 'pointer', color: '#EF4444', transition: 'all 0.2s' }}
-          title="Delete Project"
-        >
-          <i className="fa fa-trash" style={{ fontSize: '13px' }}></i>
-        </button>
+        <div style={{ position: 'absolute', right: '16px', bottom: '16px', display: 'flex', gap: '8px' }}>
+          <button 
+            onClick={(e) => { e.stopPropagation(); alert(`Edit mode for ${project.name} opened.`); }}
+            style={{ width: '32px', height: '32px', background: '#EFF6FF', border: '1px solid #BFDBFE', borderRadius: '8px', display: 'flex', alignItems: 'center', justifyContent: 'center', cursor: 'pointer', color: '#3B82F6', transition: 'all 0.2s' }}
+            title="Edit Project"
+          >
+            <i className="fa fa-pencil" style={{ fontSize: '13px' }}></i>
+          </button>
+          <button 
+            onClick={(e) => { e.stopPropagation(); onDelete(); }}
+            style={{ width: '32px', height: '32px', background: '#FEF2F2', border: '1px solid #FEE2E2', borderRadius: '8px', display: 'flex', alignItems: 'center', justifyContent: 'center', cursor: 'pointer', color: '#EF4444', transition: 'all 0.2s' }}
+            title="Delete Project"
+          >
+            <i className="fa fa-trash" style={{ fontSize: '13px' }}></i>
+          </button>
+        </div>
         <div style={{ display: 'flex', justifyContent: 'space-between', marginBottom: '4px', paddingRight: '20px' }}>
           <span style={{ fontSize: '12px', fontWeight: 700, color: typeColor, background: typeColor + '18', padding: '2px 8px', borderRadius: '20px' }}>
             {project.project_type.toUpperCase()}

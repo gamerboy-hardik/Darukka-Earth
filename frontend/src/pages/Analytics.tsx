@@ -195,7 +195,16 @@ export default function Analytics() {
                   </span>
                 )}
               </div>
-              <button onClick={() => window.print()} className="btn btn-premium"><i className="fa fa-download mr-2"></i> Export PDF Report</button>
+              <div className="d-flex align-items-center gap-2">
+                <button 
+                  onClick={() => alert(`Edit stats mode for ${project?.name || 'Ecosystem'} opened.`)} 
+                  className="btn btn-outline-secondary font-weight-bold"
+                  style={{ marginRight: '10px', borderRadius: '8px', padding: '10px 20px' }}
+                >
+                  <i className="fa fa-pencil mr-2"></i> Edit Stats
+                </button>
+                <button onClick={() => window.print()} className="btn btn-premium"><i className="fa fa-download mr-2"></i> Export PDF Report</button>
+              </div>
             </div>
 
         {loading ? (
@@ -332,8 +341,8 @@ export default function Analytics() {
                           cutout: '75%',
                           plugins: {
                             legend: {
-                              position: 'bottom',
-                              labels: { padding: 20, font: { size: 12, family: "'Inter', sans-serif" } }
+                              position: 'right',
+                              labels: { boxWidth: 15, padding: 15, font: { size: 11, family: "'Inter', sans-serif" } }
                             }
                           }
                         }}

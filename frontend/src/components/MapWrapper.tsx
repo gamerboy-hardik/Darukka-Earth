@@ -267,10 +267,13 @@ export default function MapWrapper({ projects = [], clickedProject = null, setCl
               bottom: '24px',
               left: '24px',
               right: '24px',
-              background: '#fff',
-              borderRadius: '16px',
+              background: 'rgba(255, 255, 255, 0.75)',
+              backdropFilter: 'blur(24px)',
+              WebkitBackdropFilter: 'blur(24px)',
+              border: '1px solid rgba(255, 255, 255, 0.4)',
+              borderRadius: '20px',
               padding: '24px',
-              boxShadow: '0 20px 40px rgba(0,0,0,0.2)',
+              boxShadow: '0 20px 40px rgba(0,0,0,0.15)',
               zIndex: 20,
               display: 'flex',
               gap: '30px',
@@ -278,12 +281,12 @@ export default function MapWrapper({ projects = [], clickedProject = null, setCl
             }}
           >
             <div style={{ flex: 1, overflowY: 'auto' }}>
-              <h3 style={{ margin: '0 0 8px 0', fontSize: '20px', fontWeight: 800 }}>{clickedProject.name}</h3>
+              <h3 style={{ margin: '0 0 8px 0', fontSize: '20px', fontWeight: 800, color: '#111827' }}>{clickedProject.name}</h3>
               <div style={{ display: 'flex', gap: '8px', marginBottom: '16px' }}>
-                <span style={{ fontSize: '11px', fontWeight: 700, padding: '4px 10px', background: '#1CAAD915', color: '#1CAAD9', borderRadius: '20px' }}>
+                <span style={{ fontSize: '11px', fontWeight: 700, padding: '4px 10px', background: 'rgba(28, 170, 217, 0.15)', color: '#0369a1', borderRadius: '20px' }}>
                   {clickedProject.project_type.toUpperCase()}
                 </span>
-                <span style={{ fontSize: '11px', fontWeight: 700, padding: '4px 10px', background: '#f3f4f6', color: '#374151', borderRadius: '20px' }}>
+                <span style={{ fontSize: '11px', fontWeight: 700, padding: '4px 10px', background: 'rgba(255, 255, 255, 0.6)', color: '#374151', borderRadius: '20px' }}>
                   {clickedProject.status.toUpperCase()}
                 </span>
               </div>
@@ -293,13 +296,13 @@ export default function MapWrapper({ projects = [], clickedProject = null, setCl
               
               {/* KPIs */}
               <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: '12px' }}>
-                <div style={{ padding: '12px', background: '#f8f9fa', borderRadius: '12px' }}>
+                <div style={{ padding: '12px', background: 'rgba(255, 255, 255, 0.5)', borderRadius: '12px', border: '1px solid rgba(255, 255, 255, 0.6)' }}>
                   <div style={{ fontSize: '11px', color: '#6B7280', fontWeight: 600, textTransform: 'uppercase' }}>Total CO2e</div>
-                  <div style={{ fontSize: '18px', fontWeight: 800, color: '#1CAAD9' }}>
+                  <div style={{ fontSize: '18px', fontWeight: 800, color: '#0ea5e9' }}>
                     {clickedProject.project_type === 'carbon' ? '14,205' : '3,142'} <span style={{ fontSize: '12px', fontWeight: 600, color: '#9CA3AF' }}>t</span>
                   </div>
                 </div>
-                <div style={{ padding: '12px', background: '#f8f9fa', borderRadius: '12px' }}>
+                <div style={{ padding: '12px', background: 'rgba(255, 255, 255, 0.5)', borderRadius: '12px', border: '1px solid rgba(255, 255, 255, 0.6)' }}>
                   <div style={{ fontSize: '11px', color: '#6B7280', fontWeight: 600, textTransform: 'uppercase' }}>Bio Score</div>
                   <div style={{ fontSize: '18px', fontWeight: 800, color: '#10B981' }}>
                     {clickedProject.project_type === 'biodiversity' ? '4.8' : '3.6'} <span style={{ fontSize: '12px', fontWeight: 600, color: '#9CA3AF' }}>/ 5</span>
@@ -309,7 +312,7 @@ export default function MapWrapper({ projects = [], clickedProject = null, setCl
             </div>
             
             {/* Chart Area */}
-            <div style={{ flex: 1.2, minWidth: '220px', display: 'flex', flexDirection: 'column' }}>
+            <div style={{ flex: 1, minWidth: '180px', display: 'flex', flexDirection: 'column', maxWidth: '250px' }}>
               <div style={{ fontSize: '13px', fontWeight: 700, color: '#374151', marginBottom: '8px' }}>Performance Trend</div>
               <div style={{ flex: 1, minHeight: '120px', position: 'relative' }}>
                 <Line
@@ -321,8 +324,8 @@ export default function MapWrapper({ projects = [], clickedProject = null, setCl
                         data: clickedProject.id ? 
                           [10, 15, 22, 35, 48, 60].map(v => v + (clickedProject.id * 3)) : 
                           [1200, 1900, 2400, 3200, 4100, 5000],
-                        borderColor: '#1CAAD9',
-                        backgroundColor: '#1CAAD9',
+                        borderColor: '#0ea5e9',
+                        backgroundColor: '#0ea5e9',
                         borderWidth: 3,
                         pointRadius: 0,
                         pointHoverRadius: 4,
@@ -348,42 +351,54 @@ export default function MapWrapper({ projects = [], clickedProject = null, setCl
             </div>
             
             {/* Composition Area */}
-            <div style={{ flex: 1, minWidth: '150px', display: 'flex', flexDirection: 'column' }}>
-              <div style={{ fontSize: '13px', fontWeight: 700, color: '#374151', marginBottom: '8px' }}>Area Dist.</div>
-              <div style={{ flex: 1, minHeight: '120px', position: 'relative', display: 'flex', justifyContent: 'center' }}>
+            <div style={{ flex: 0.8, minWidth: '160px', display: 'flex', flexDirection: 'column', alignItems: 'center', maxWidth: '200px' }}>
+              <div style={{ fontSize: '13px', fontWeight: 700, color: '#374151', marginBottom: '8px', alignSelf: 'flex-start' }}>Area Dist.</div>
+              <div style={{ height: '120px', width: '120px', position: 'relative' }}>
                 <Doughnut
                   data={{
-                    labels: ['Forest', 'Water', 'Grass'],
+                    labels: ['Mangroves', 'Tropical Shrubs', 'Native Grasses', 'Canopy Trees'],
                     datasets: [{
-                      data: clickedProject.project_type === 'carbon' ? [60, 10, 30] : [40, 40, 20],
-                      backgroundColor: ['#10B981', '#1CAAD9', '#F59E0B'],
+                      data: [45, 25, 20, 10],
+                      backgroundColor: ['#10B981', '#1CAAD9', '#F59E0B', '#EC4899'],
                       borderWidth: 0,
-                      cutout: '70%'
+                      hoverOffset: 4
                     }]
                   }}
                   options={{
                     responsive: true,
                     maintainAspectRatio: false,
+                    cutout: '70%',
                     plugins: {
                       legend: { display: false },
+                      tooltip: { enabled: true }
                     }
                   }}
                 />
               </div>
             </div>
 
-            <div style={{ display: 'flex', flexDirection: 'column', gap: '12px', justifyContent: 'center' }}>
+            {/* Actions */}
+            <div style={{ display: 'flex', flexDirection: 'column', justifyContent: 'center', gap: '12px', minWidth: '140px' }}>
               <button 
                 onClick={() => setClickedProject(null)}
-                style={{ padding: '8px 16px', border: '1px solid #e5e7eb', background: '#fff', borderRadius: '8px', cursor: 'pointer', fontWeight: 600, color: '#374151', whiteSpace: 'nowrap' }}
+                className="btn"
+                style={{ background: 'rgba(255,255,255,0.6)', border: '1px solid rgba(0,0,0,0.1)', color: '#374151', fontWeight: 600, padding: '10px 16px', borderRadius: '10px' }}
               >
                 Close
               </button>
               <button 
                 onClick={() => window.location.href = `/analytics?projectId=${clickedProject.id}`}
-                style={{ padding: '8px 16px', border: 'none', background: '#111827', borderRadius: '8px', cursor: 'pointer', fontWeight: 600, color: '#fff', whiteSpace: 'nowrap' }}
+                className="btn"
+                style={{ background: '#111827', color: '#fff', fontWeight: 600, padding: '10px 16px', borderRadius: '10px' }}
               >
                 Full Analytics
+              </button>
+              <button 
+                onClick={() => alert(`Edit mode for ${clickedProject.name} opened. (In MVP, this opens full project settings)`)}
+                className="btn btn-outline-primary"
+                style={{ fontWeight: 600, padding: '10px 16px', borderRadius: '10px' }}
+              >
+                <i className="fa fa-pencil mr-2"></i> Edit Details
               </button>
             </div>
           </motion.div>
