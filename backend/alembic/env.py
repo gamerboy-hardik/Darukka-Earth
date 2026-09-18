@@ -1,7 +1,7 @@
 from logging.config import fileConfig
 
 from sqlalchemy import engine_from_config
-from sqlalchemy import pool
+from sqlalchemy import pool, text
 
 from alembic import context
 import geoalchemy2  # required for postgis reflection
@@ -115,6 +115,9 @@ def run_migrations_online() -> None:
     )
 
     with connectable.connect() as connection:
+        connection.execute(text('CREATE EXTENSION IF NOT EXISTS postgis;'))
+        connection.commit()
+        
         context.configure(
             connection=connection, target_metadata=target_metadata,
             include_object=include_object,
