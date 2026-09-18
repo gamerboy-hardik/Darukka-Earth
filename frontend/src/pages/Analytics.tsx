@@ -20,6 +20,9 @@ export default function Analytics() {
   const [metrics, setMetrics] = useState<any[]>([]);
   const [loading, setLoading] = useState(true);
   
+  const [isEditModalOpen, setIsEditModalOpen] = useState(false);
+  const [editStats, setEditStats] = useState({ carbon: 0, bio: 0, survival: 0 });
+
   // Ref for custom gradients
   const chartRef = useRef<any>(null);
 
@@ -49,7 +52,9 @@ export default function Analytics() {
       }
       setProject(pData);
 
-      // Generate realistic 24-month dataset deterministically based on project type
+      // Setup Edit Stats modal state
+      if (!isEditModalOpen) {
+        // Generate realistic 24-month dataset deterministically based on project type
       const isCarbon = pData.project_type === 'carbon';
       const isBio = pData.project_type === 'biodiversity';
       
@@ -87,6 +92,7 @@ export default function Analytics() {
       }
       
       setMetrics(data);
+      }
       setLoading(false);
     };
 
@@ -197,7 +203,14 @@ export default function Analytics() {
               </div>
               <div className="d-flex align-items-center gap-2">
                 <button 
-                  onClick={() => alert(`Edit stats mode for ${project?.name || 'Ecosystem'} opened.`)} 
+                  onClick={() => {
+                    setEditStats({
+                      carbon: metrics[metrics.length-1]?.Carbon || 0,
+                      bio: metrics[metrics.length-1]?.Biodiversity || 0,
+                      survival: metrics[metrics.length-1]?.Survival || 0,
+                    });
+                    setIsEditModalOpen(true);
+                  }} 
                   className="btn btn-outline-secondary font-weight-bold"
                   style={{ marginRight: '10px', borderRadius: '8px', padding: '10px 20px' }}
                 >
@@ -317,41 +330,48 @@ export default function Analytics() {
 
               <div className="col-lg-4">
                 <div className="card premium-card h-100 border-0 shadow-sm">
-                  <div className="card-body d-flex flex-column">
+                  <div className="card-body">
                     <h5 className="card-title mb-4 font-weight-bold text-dark">Ecosystem Composition</h5>
-                    <div style={{ height: '350px', position: 'relative' }}>
-                      <Doughnut
-                        data={{
-                          labels: ['Mangroves', 'Tropical Shrubs', 'Native Grasses', 'Canopy Trees'],
-                          datasets: [{
-                            data: project?.project_type === 'biodiversity' ? [25, 40, 25, 10] : [55, 15, 10, 20],
-                            backgroundColor: [
-                              '#28a745', // green
-                              '#1CAAD9', // blue
-                              '#ffc107', // yellow
-                              '#e83e8c'  // pink
-                            ],
-                            borderWidth: 0,
-                            hoverOffset: 4
-                          }]
-                        }}
-                        options={{
-                          responsive: true,
-                          maintainAspectRatio: false,
-                          cutout: '75%',
-                          plugins: {
-                            legend: {
-                              position: 'right',
-                              labels: { boxWidth: 15, padding: 15, font: { size: 11, family: "'Inter', sans-serif" } }
+                    <div className="d-flex align-items-center justify-content-center h-100 pb-4">
+                      <div style={{ flex: 1, height: '260px', position: 'relative' }}>
+                        <Doughnut
+                          data={{
+                            labels: ['Mangroves', 'Tropical Shrubs', 'Native Grasses', 'Canopy Trees'],
+                            datasets: [{
+                              data: project?.project_type === 'carbon' ? [60, 20, 10, 10] : [40, 30, 15, 15],
+                              backgroundColor: [
+                                '#10B981', // green
+                                '#1CAAD9', // blue
+                                '#ffc107', // yellow
+                                '#e83e8c'  // pink
+                              ],
+                              borderWidth: 0,
+                              hoverOffset: 4
+                            }]
+                          }}
+                          options={{
+                            responsive: true,
+                            maintainAspectRatio: false,
+                            cutout: '75%',
+                            plugins: {
+                              legend: { display: false }
                             }
-                          }
-                        }}
-                      />
-                      <div style={{ position: 'absolute', top: '40%', left: '50%', transform: 'translate(-50%, -50%)', textAlign: 'center' }}>
-                        <div style={{ fontSize: '12px', color: '#6b7280', textTransform: 'uppercase', letterSpacing: '1px' }}>Dominant</div>
-                        <div style={{ fontSize: '18px', fontWeight: 'bold', color: '#374151' }}>
-                          {project?.project_type === 'biodiversity' ? 'Tropical Shrubs' : 'Mangroves'}
+                          }}
+                        />
+                        <div style={{ position: 'absolute', top: '50%', left: '50%', transform: 'translate(-50%, -50%)', textAlign: 'center', pointerEvents: 'none' }}>
+                          <div style={{ fontSize: '11px', color: '#6b7280', textTransform: 'uppercase', letterSpacing: '1px' }}>Dominant</div>
+                          <div style={{ fontSize: '14px', fontWeight: 'bold', color: '#374151', lineHeight: '1.2' }}>
+                            {project?.project_type === 'biodiversity' ? 'Tropical Shrubs' : 'Mangroves'}
+                          </div>
                         </div>
+                      </div>
+                      <div style={{ paddingLeft: '15px', minWidth: '130px' }}>
+                        <ul className="list-unstyled m-0">
+                          <li className="mb-2"><span style={{ display: 'inline-block', width: '12px', height: '12px', background: '#10B981', borderRadius: '50%', marginRight: '8px' }}></span><span style={{ fontSize: '12px', color: '#4B5563', fontWeight: 600 }}>Mangroves</span></li>
+                          <li className="mb-2"><span style={{ display: 'inline-block', width: '12px', height: '12px', background: '#1CAAD9', borderRadius: '50%', marginRight: '8px' }}></span><span style={{ fontSize: '12px', color: '#4B5563', fontWeight: 600 }}>Tropical Shrubs</span></li>
+                          <li className="mb-2"><span style={{ display: 'inline-block', width: '12px', height: '12px', background: '#ffc107', borderRadius: '50%', marginRight: '8px' }}></span><span style={{ fontSize: '12px', color: '#4B5563', fontWeight: 600 }}>Native Grasses</span></li>
+                          <li><span style={{ display: 'inline-block', width: '12px', height: '12px', background: '#e83e8c', borderRadius: '50%', marginRight: '8px' }}></span><span style={{ fontSize: '12px', color: '#4B5563', fontWeight: 600 }}>Canopy Trees</span></li>
+                        </ul>
                       </div>
                     </div>
                   </div>

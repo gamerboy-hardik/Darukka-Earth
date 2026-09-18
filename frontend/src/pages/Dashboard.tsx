@@ -49,9 +49,9 @@ export default function Dashboard() {
   const [viewMode, setViewMode] = useState<'grid' | 'list'>('grid');
   const [showMore, setShowMore] = useState(false);
 
-  // Add Project Modal State
   const [isModalOpen, setIsModalOpen] = useState(false);
   const [isSubmitting, setIsSubmitting] = useState(false);
+  const [editingProjectId, setEditingProjectId] = useState<number | null>(null);
   const [newProject, setNewProject] = useState({
     name: '',
     description: '',
@@ -145,7 +145,20 @@ export default function Dashboard() {
     navigate('/login');
   };
 
-  const handleAddProject = async (e: React.FormEvent) => {
+  const openEditModal = (project: any) => {
+    setEditingProjectId(project.id);
+    setNewProject({
+      name: project.name,
+      description: project.description || '',
+      project_type: project.project_type || 'carbon',
+      latitude: project.latitude?.toString() || '',
+      longitude: project.longitude?.toString() || '',
+      boundary_geojson: project.boundary_geojson || ''
+    });
+    setIsModalOpen(true);
+  };
+
+  const handleSaveProject = async (e: React.FormEvent) => {
     e.preventDefault();
     setIsSubmitting(true);
     try {
@@ -153,23 +166,33 @@ export default function Dashboard() {
         name: newProject.name,
         description: newProject.description,
         project_type: newProject.project_type,
-        status: "active",
+        ...(editingProjectId ? {} : { status: "active" }),
         latitude: newProject.latitude ? parseFloat(newProject.latitude) : null,
         longitude: newProject.longitude ? parseFloat(newProject.longitude) : null,
         boundary_geojson: newProject.boundary_geojson || null,
       };
       
-      const res = await fetchWithAuth('/api/projects/', {
-        method: 'POST',
+      const url = editingProjectId ? `/api/projects/${editingProjectId}` : '/api/projects/';
+      const method = editingProjectId ? 'PATCH' : 'POST';
+      
+      const res = await fetchWithAuth(url, {
+        method,
         body: JSON.stringify(payload)
       });
       const data = await res.json();
       
-      setProjects([data, ...projects]);
+      if (editingProjectId) {
+         setProjects(projects.map(p => p.id === editingProjectId ? data : p));
+         if (clickedProject?.id === editingProjectId) setClickedProject(data);
+      } else {
+         setProjects([data, ...projects]);
+      }
+      
       setIsModalOpen(false);
+      setEditingProjectId(null);
       setNewProject({ name: '', description: '', project_type: 'carbon', latitude: '', longitude: '', boundary_geojson: '' });
     } catch (error) {
-      alert("Failed to add project. Please try again.");
+      alert("Failed to save project. Please try again.");
     } finally {
       setIsSubmitting(false);
     }
@@ -250,9 +273,13 @@ export default function Dashboard() {
             <button onClick={() => navigate('/analytics')} style={{ padding: '7px 16px', border: '1px solid #e5e7eb', borderRadius: '8px', background: '#fff', fontSize: '13px', fontWeight: 500, color: '#374151', cursor: 'pointer' }}>
               <i className="fa fa-chart-bar" style={{ marginRight: '6px', color: '#1CAAD9' }}></i>Reports
             </button>
-            <button
-              onClick={() => setIsModalOpen(true)}
-              style={{ padding: '7px 16px', border: 'none', borderRadius: '8px', background: '#111827', fontSize: '13px', fontWeight: 600, color: '#fff', cursor: 'pointer' }}
+            <button 
+              onClick={() => {
+                setEditingProjectId(null);
+                setNewProject({ name: '', description: '', project_type: 'carbon', latitude: '', longitude: '', boundary_geojson: '' });
+                setIsModalOpen(true);
+              }}
+              style={{ padding: '8px 16px', background: '#111827', border: 'none', borderRadius: '8px', color: '#fff', fontSize: '13px', fontWeight: 600, cursor: 'pointer', display: 'flex', alignItems: 'center', gap: '8px' }}
             >
               <i className="fa fa-plus" style={{ marginRight: '6px', fontSize: '11px' }}></i>
               Add Project
@@ -382,13 +409,13 @@ export default function Dashboard() {
             ) : viewMode === 'grid' ? (
               <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: '16px' }}>
                 {filtered.map((project, idx) => (
-                  <ProjectGridCard key={project.id} project={project} idx={idx} setClickedProject={setClickedProject} onDelete={() => handleDeleteProject(project.id)} />
+                  <ProjectGridCard key={project.id} project={project} idx={idx} setClickedProject={setClickedProject} onEdit={() => openEditModal(project)} onDelete={() => handleDeleteProject(project.id)} />
                 ))}
               </div>
             ) : (
               <div style={{ display: 'flex', flexDirection: 'column', gap: '12px' }}>
                 {filtered.map((project, idx) => (
-                  <ProjectListCard key={project.id} project={project} idx={idx} setClickedProject={setClickedProject} onDelete={() => handleDeleteProject(project.id)} />
+                  <ProjectListCard key={project.id} project={project} idx={idx} setClickedProject={setClickedProject} onEdit={() => openEditModal(project)} onDelete={() => handleDeleteProject(project.id)} />
                 ))}
               </div>
             )}
@@ -401,8 +428,8 @@ export default function Dashboard() {
       {isModalOpen && (
         <div style={{ position: 'fixed', top: 0, left: 0, width: '100vw', height: '100vh', background: 'rgba(17, 24, 39, 0.7)', display: 'flex', alignItems: 'center', justifyContent: 'center', zIndex: 9999 }}>
           <div style={{ background: '#fff', padding: '30px', borderRadius: '16px', width: '90%', maxWidth: '500px', boxShadow: '0 25px 50px -12px rgba(0,0,0,0.25)' }}>
-            <h3 style={{ margin: '0 0 20px 0', fontSize: '20px', color: '#111827', fontWeight: 700 }}>Add New Project</h3>
-            <form onSubmit={handleAddProject} style={{ display: 'flex', flexDirection: 'column', gap: '16px' }}>
+            <h3 style={{ margin: '0 0 20px 0', fontSize: '20px', color: '#111827', fontWeight: 700 }}>{editingProjectId ? 'Edit Project' : 'Add New Project'}</h3>
+            <form onSubmit={handleSaveProject} style={{ display: 'flex', flexDirection: 'column', gap: '16px' }}>
               <div>
                 <label style={{ display: 'block', fontSize: '13px', fontWeight: 600, color: '#374151', marginBottom: '6px' }}>Project Name</label>
                 <input required type="text" value={newProject.name} onChange={e => setNewProject({...newProject, name: e.target.value})} style={{ width: '100%', padding: '10px 14px', border: '1px solid #d1d5db', borderRadius: '8px', fontSize: '14px' }} placeholder="e.g. Sundarbans Restoration" />
@@ -504,7 +531,7 @@ export default function Dashboard() {
               <div style={{ display: 'flex', justifyContent: 'flex-end', gap: '12px', marginTop: '10px' }}>
                 <button type="button" onClick={() => setIsModalOpen(false)} style={{ padding: '9px 18px', background: '#f3f4f6', border: 'none', borderRadius: '8px', color: '#374151', fontSize: '14px', fontWeight: 600, cursor: 'pointer' }}>Cancel</button>
                 <button type="submit" disabled={isSubmitting} style={{ padding: '9px 24px', background: '#1CAAD9', border: 'none', borderRadius: '8px', color: '#fff', fontSize: '14px', fontWeight: 600, cursor: isSubmitting ? 'not-allowed' : 'pointer', opacity: isSubmitting ? 0.7 : 1 }}>
-                  {isSubmitting ? 'Saving...' : 'Publish Project'}
+                  {isSubmitting ? 'Saving...' : (editingProjectId ? 'Save Changes' : 'Publish Project')}
                 </button>
               </div>
             </form>
@@ -516,7 +543,7 @@ export default function Dashboard() {
 }
 
 /* ── GRID CARD ── */
-function ProjectGridCard({ project, idx, setClickedProject, onDelete }: { project: any; idx: number; setClickedProject: any, onDelete: () => void }) {
+function ProjectGridCard({ project, idx, setClickedProject, onEdit, onDelete }: { project: any; idx: number; setClickedProject: any, onEdit: () => void, onDelete: () => void }) {
   const [hovered, setHovered] = useState(false);
   const img = PROJECT_IMAGES[idx % PROJECT_IMAGES.length];
   const typeColor = TYPE_COLORS[project.project_type] || '#6B7280';
@@ -543,7 +570,7 @@ function ProjectGridCard({ project, idx, setClickedProject, onDelete }: { projec
         <div style={{ padding: '12px', display: 'flex', justifyContent: 'space-between', alignItems: 'flex-start' }}>
           <div style={{ display: 'flex', gap: '8px' }}>
             <button 
-              onClick={(e) => { e.stopPropagation(); alert(`Edit mode for ${project.name} opened.`); }}
+              onClick={(e) => { e.stopPropagation(); onEdit(); }}
               style={{ width: '28px', height: '28px', background: 'rgba(255, 255, 255, 0.9)', border: 'none', borderRadius: '50%', display: 'flex', alignItems: 'center', justifyContent: 'center', cursor: 'pointer', boxShadow: '0 2px 4px rgba(0,0,0,0.1)', color: '#3B82F6' }}
               title="Edit Project Details"
             >
@@ -591,7 +618,7 @@ function ProjectGridCard({ project, idx, setClickedProject, onDelete }: { projec
 }
 
 /* ── LIST CARD ── */
-function ProjectListCard({ project, idx, setClickedProject, onDelete }: { project: any; idx: number; setClickedProject: any, onDelete: () => void }) {
+function ProjectListCard({ project, idx, setClickedProject, onEdit, onDelete }: { project: any; idx: number; setClickedProject: any, onEdit: () => void, onDelete: () => void }) {
   const [hovered, setHovered] = useState(false);
   const img = PROJECT_IMAGES[idx % PROJECT_IMAGES.length];
   const typeColor = TYPE_COLORS[project.project_type] || '#6B7280';
@@ -618,7 +645,7 @@ function ProjectListCard({ project, idx, setClickedProject, onDelete }: { projec
       <div style={{ padding: '14px 16px', flex: 1, position: 'relative' }}>
         <div style={{ position: 'absolute', right: '16px', bottom: '16px', display: 'flex', gap: '8px' }}>
           <button 
-            onClick={(e) => { e.stopPropagation(); alert(`Edit mode for ${project.name} opened.`); }}
+            onClick={(e) => { e.stopPropagation(); onEdit(); }}
             style={{ width: '32px', height: '32px', background: '#EFF6FF', border: '1px solid #BFDBFE', borderRadius: '8px', display: 'flex', alignItems: 'center', justifyContent: 'center', cursor: 'pointer', color: '#3B82F6', transition: 'all 0.2s' }}
             title="Edit Project"
           >
