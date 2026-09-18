@@ -135,9 +135,13 @@ export default function Analytics() {
             body { background-color: #fff !important; -webkit-print-color-adjust: exact; }
             .ts-page-wrapper { background: #fff !important; }
             .premium-card { box-shadow: none !important; border: 1px solid #e5e7eb !important; break-inside: avoid; }
-            .container-fluid { max-width: 100% !important; padding: 0 !important; }
+            .container-fluid { max-width: 100% !important; padding: 0 !important; width: 100% !important; }
+            .row { margin: 0 !important; }
+            .print-full-width { flex: 0 0 100% !important; max-width: 100% !important; padding: 0 !important; }
             .d-print-none { display: none !important; }
-            canvas { max-height: 250px !important; }
+            .d-print-block { display: block !important; }
+            canvas { max-height: 250px !important; width: 100% !important; }
+            .sketchfab-embed-wrapper { display: none !important; } /* 3D models don't print well */
           }
         `}
       </style>
@@ -170,7 +174,18 @@ export default function Analytics() {
               ))}
             </div>
           </div>
-          <div className="col-md-9">
+          <div className="col-md-9 print-full-width">
+            {/* Custom Print Header (Only visible in PDF) */}
+            <div className="d-none d-print-block mb-4 border-bottom pb-3">
+              <div className="d-flex justify-content-between align-items-center">
+                <h2 className="font-weight-bold m-0" style={{ color: '#1CAAD9' }}>Darukaa.Earth</h2>
+                <div className="text-right">
+                  <h4 className="font-weight-bold m-0 text-dark">{project?.name || 'Ecosystem'}</h4>
+                  <p className="text-muted m-0">Generated: {new Date().toLocaleDateString()}</p>
+                </div>
+              </div>
+            </div>
+
             <div className="d-flex justify-content-between align-items-center mb-4 d-print-none">
               <div>
                 <h2 className="text-dark font-weight-bold mb-1"><i className="fa fa-chart-line mr-2" style={{ color: 'var(--primary)' }}></i> {project?.name || 'Ecosystem'} Analytics</h2>
