@@ -2,8 +2,26 @@ import React, { useEffect, useState } from 'react';
 import { useAuth } from '../contexts/AuthContext';
 import { useNavigate, Link } from 'react-router-dom';
 import { 
-  LineChart, Line, BarChart, Bar, XAxis, YAxis, CartesianGrid, Tooltip, Legend, ResponsiveContainer 
-} from 'recharts';
+  Chart as ChartJS, 
+  CategoryScale, 
+  LinearScale, 
+  PointElement, 
+  LineElement, 
+  Title, 
+  Tooltip as ChartTooltip, 
+  Legend as ChartLegend 
+} from 'chart.js';
+import { Line } from 'react-chartjs-2';
+
+ChartJS.register(
+  CategoryScale,
+  LinearScale,
+  PointElement,
+  LineElement,
+  Title,
+  ChartTooltip,
+  ChartLegend
+);
 import { fetchWithAuth } from '../lib/api';
 
 export default function Analytics() {
@@ -123,17 +141,43 @@ export default function Analytics() {
                 <div className="card premium-card h-100">
                   <div className="card-body">
                     <h5 className="card-title mb-4 font-weight-bold text-dark">Carbon Accumulation Over Time</h5>
-                    <div style={{ height: '350px' }}>
-                      <ResponsiveContainer width="100%" height="100%">
-                        <LineChart data={metrics} margin={{ top: 5, right: 30, left: 20, bottom: 5 }}>
-                          <CartesianGrid strokeDasharray="3 3" stroke="var(--border-light)" vertical={false} />
-                          <XAxis dataKey="name" stroke="var(--text-muted)" />
-                          <YAxis stroke="var(--text-muted)" />
-                          <Tooltip contentStyle={{ backgroundColor: 'var(--bg-surface)', borderColor: 'var(--border-light)', color: 'var(--text-main)', borderRadius: '8px', boxShadow: 'var(--shadow-md)' }} />
-                          <Legend />
-                          <Line type="monotone" dataKey="Carbon" stroke="var(--success)" strokeWidth={3} activeDot={{ r: 8 }} />
-                        </LineChart>
-                      </ResponsiveContainer>
+                    <div style={{ height: '350px', position: 'relative' }}>
+                      <Line
+                        data={{
+                          labels: metrics.map((d: any) => d.name),
+                          datasets: [
+                            {
+                              label: 'Carbon Sequestered',
+                              data: metrics.map((d: any) => d.Carbon),
+                              borderColor: '#28a745',
+                              backgroundColor: '#28a745',
+                              borderWidth: 3,
+                              pointRadius: 4,
+                              pointHoverRadius: 8,
+                              tension: 0.4
+                            },
+                          ],
+                        }}
+                        options={{
+                          responsive: true,
+                          maintainAspectRatio: false,
+                          plugins: {
+                            legend: { position: 'top' },
+                            tooltip: {
+                              backgroundColor: 'var(--bg-surface)',
+                              titleColor: 'var(--text-main)',
+                              bodyColor: 'var(--text-main)',
+                              borderColor: 'var(--border-light)',
+                              borderWidth: 1,
+                              padding: 10,
+                            }
+                          },
+                          scales: {
+                            x: { grid: { display: false }, ticks: { color: 'var(--text-muted)' } },
+                            y: { grid: { color: 'var(--border-light)' }, ticks: { color: 'var(--text-muted)' } }
+                          }
+                        }}
+                      />
                     </div>
                   </div>
                 </div>

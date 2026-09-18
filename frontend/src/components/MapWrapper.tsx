@@ -1,8 +1,26 @@
 import React, { useState, useEffect } from 'react';
 import Map, { NavigationControl, Marker, Popup, Source, Layer, type ViewStateChangeEvent } from 'react-map-gl/mapbox';
 import { motion, AnimatePresence } from 'framer-motion';
-import { LineChart, Line, XAxis, YAxis, CartesianGrid, Tooltip as RechartsTooltip, ResponsiveContainer } from 'recharts';
+import {
+  Chart as ChartJS,
+  CategoryScale,
+  LinearScale,
+  PointElement,
+  LineElement,
+  Title,
+  Tooltip as ChartTooltip,
+} from 'chart.js';
+import { Line } from 'react-chartjs-2';
 import 'mapbox-gl/dist/mapbox-gl.css';
+
+ChartJS.register(
+  CategoryScale,
+  LinearScale,
+  PointElement,
+  LineElement,
+  Title,
+  ChartTooltip
+);
 
 const MAPBOX_TOKEN = import.meta.env.VITE_MAPBOX_TOKEN || '';
 
@@ -240,23 +258,44 @@ export default function MapWrapper({ projects = [] }: MapWrapperProps) {
             {/* Chart Area */}
             <div style={{ flex: 1.5, minWidth: '300px', display: 'flex', flexDirection: 'column' }}>
               <div style={{ fontSize: '13px', fontWeight: 700, color: '#374151', marginBottom: '8px' }}>Performance Over Time (CO2 Mitigated)</div>
-              <div style={{ flex: 1, minHeight: '150px' }}>
-                <ResponsiveContainer width="100%" height="100%">
-                  <LineChart data={[
-                    { name: 'Jan', co2: 1200 },
-                    { name: 'Feb', co2: 1900 },
-                    { name: 'Mar', co2: 2400 },
-                    { name: 'Apr', co2: 3200 },
-                    { name: 'May', co2: 4100 },
-                    { name: 'Jun', co2: 5000 },
-                  ]}>
-                    <CartesianGrid strokeDasharray="3 3" vertical={false} stroke="#e5e7eb" />
-                    <XAxis dataKey="name" axisLine={false} tickLine={false} tick={{ fontSize: 11, fill: '#6B7280' }} dy={10} />
-                    <YAxis axisLine={false} tickLine={false} tick={{ fontSize: 11, fill: '#6B7280' }} dx={-10} />
-                    <RechartsTooltip contentStyle={{ borderRadius: '8px', border: 'none', boxShadow: '0 4px 6px rgba(0,0,0,0.1)' }} />
-                    <Line type="monotone" dataKey="co2" stroke="#1CAAD9" strokeWidth={3} dot={{ r: 4, strokeWidth: 2 }} activeDot={{ r: 6 }} />
-                  </LineChart>
-                </ResponsiveContainer>
+              <div style={{ flex: 1, minHeight: '150px', position: 'relative' }}>
+                <Line
+                  data={{
+                    labels: ['Jan', 'Feb', 'Mar', 'Apr', 'May', 'Jun'],
+                    datasets: [
+                      {
+                        label: 'tCO2e Mitigated',
+                        data: [1200, 1900, 2400, 3200, 4100, 5000],
+                        borderColor: '#1CAAD9',
+                        backgroundColor: '#1CAAD9',
+                        borderWidth: 3,
+                        pointRadius: 4,
+                        pointHoverRadius: 6,
+                        tension: 0.4
+                      },
+                    ],
+                  }}
+                  options={{
+                    responsive: true,
+                    maintainAspectRatio: false,
+                    plugins: {
+                      legend: { display: false },
+                      tooltip: {
+                        backgroundColor: 'rgba(255, 255, 255, 0.9)',
+                        titleColor: '#374151',
+                        bodyColor: '#374151',
+                        borderColor: '#e5e7eb',
+                        borderWidth: 1,
+                        padding: 10,
+                        displayColors: false,
+                      }
+                    },
+                    scales: {
+                      x: { grid: { display: false }, ticks: { color: '#6B7280', font: { size: 11 } }, border: { display: false } },
+                      y: { grid: { display: false }, ticks: { color: '#6B7280', font: { size: 11 } }, border: { display: false } }
+                    }
+                  }}
+                />
               </div>
             </div>
 
