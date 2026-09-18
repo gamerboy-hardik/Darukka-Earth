@@ -3,32 +3,12 @@ import { useAuth } from '../contexts/AuthContext';
 import { useNavigate, Link } from 'react-router-dom';
 import { 
   Chart as ChartJS, 
-  CategoryScale, 
-  LinearScale, 
-  PointElement, 
-  LineElement, 
-  BarElement,
-  ArcElement,
-  Filler,
-  Title, 
-  Tooltip as ChartTooltip, 
-  Legend as ChartLegend 
+  registerables 
 } from 'chart.js';
 import { Line, Bar, Doughnut } from 'react-chartjs-2';
 import { fetchWithAuth } from '../lib/api';
 
-ChartJS.register(
-  CategoryScale,
-  LinearScale,
-  PointElement,
-  LineElement,
-  BarElement,
-  ArcElement,
-  Filler,
-  Title,
-  ChartTooltip,
-  ChartLegend
-);
+ChartJS.register(...registerables);
 
 export default function Analytics() {
   const { user, logout } = useAuth();
