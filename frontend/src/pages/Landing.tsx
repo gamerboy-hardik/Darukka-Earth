@@ -33,40 +33,79 @@ export default function Landing() {
   useEffect(() => {
     const t1 = setTimeout(() => setLoaded(true), 600);
     const t2 = setTimeout(() => setScreenDone(true), 1400);
-    return () => { clearTimeout(t1); clearTimeout(t2); };
+    return () => {
+      clearTimeout(t1);
+      clearTimeout(t2);
+    };
   }, []);
 
   return (
     <>
       {/* Loading Screen */}
       {!screenDone && (
-        <div style={{
-          position: 'fixed', inset: 0, zIndex: 9999,
-          background: '#ffffff',
-          display: 'flex', flexDirection: 'column', alignItems: 'center', justifyContent: 'center',
-          transition: 'opacity 0.7s ease, transform 0.7s ease',
-          opacity: loaded ? 0 : 1,
-          transform: loaded ? 'scale(1.04)' : 'scale(1)',
-          pointerEvents: loaded ? 'none' : 'all',
-        }}>
-          <div style={{ display: 'flex', flexDirection: 'column', alignItems: 'center', gap: '24px' }}>
-            <div style={{
-              width: 80, height: 80, borderRadius: '24px',
-              background: 'linear-gradient(135deg, #1CAAD9, #10B981)',
-              display: 'flex', alignItems: 'center', justifyContent: 'center',
-              fontSize: 38,
-              boxShadow: '0 0 40px rgba(28,170,217,0.3)',
-              animation: 'lPulse 1.2s ease-in-out infinite',
-            }}>🌿</div>
-            <span style={{ fontFamily: "'Outfit',sans-serif", fontWeight: 800, fontSize: 28, color: '#111827', letterSpacing: '-0.5px' }}>
+        <div
+          style={{
+            position: 'fixed',
+            inset: 0,
+            zIndex: 9999,
+            background: '#ffffff',
+            display: 'flex',
+            flexDirection: 'column',
+            alignItems: 'center',
+            justifyContent: 'center',
+            transition: 'opacity 0.7s ease, transform 0.7s ease',
+            opacity: loaded ? 0 : 1,
+            transform: loaded ? 'scale(1.04)' : 'scale(1)',
+            pointerEvents: loaded ? 'none' : 'all',
+          }}
+        >
+          <div
+            style={{ display: 'flex', flexDirection: 'column', alignItems: 'center', gap: '24px' }}
+          >
+            <div
+              style={{
+                width: 80,
+                height: 80,
+                borderRadius: '24px',
+                background: 'linear-gradient(135deg, #1CAAD9, #10B981)',
+                display: 'flex',
+                alignItems: 'center',
+                justifyContent: 'center',
+                fontSize: 38,
+                boxShadow: '0 0 40px rgba(28,170,217,0.3)',
+                animation: 'lPulse 1.2s ease-in-out infinite',
+              }}
+            >
+              🌿
+            </div>
+            <span
+              style={{
+                fontFamily: "'Outfit',sans-serif",
+                fontWeight: 800,
+                fontSize: 28,
+                color: '#111827',
+                letterSpacing: '-0.5px',
+              }}
+            >
               Darukaa<span style={{ color: '#1CAAD9' }}>.Earth</span>
             </span>
-            <div style={{ width: 200, height: 3, background: 'rgba(0,0,0,0.05)', borderRadius: 99, overflow: 'hidden' }}>
-              <div style={{
-                height: '100%', borderRadius: 99,
-                background: 'linear-gradient(to right,#1CAAD9,#10B981)',
-                animation: 'lBar 1.1s ease-out forwards',
-              }} />
+            <div
+              style={{
+                width: 200,
+                height: 3,
+                background: 'rgba(0,0,0,0.05)',
+                borderRadius: 99,
+                overflow: 'hidden',
+              }}
+            >
+              <div
+                style={{
+                  height: '100%',
+                  borderRadius: 99,
+                  background: 'linear-gradient(to right,#1CAAD9,#10B981)',
+                  animation: 'lBar 1.1s ease-out forwards',
+                }}
+              />
             </div>
             <span style={{ color: '#6B7280', fontSize: 13 }}>Initializing geospatial engine…</span>
           </div>
@@ -78,7 +117,14 @@ export default function Landing() {
       )}
 
       {/* Main Page */}
-      <div style={{ background: '#ffffff', color: '#111827', fontFamily: "'Inter',sans-serif", overflowX: 'hidden' }}>
+      <div
+        style={{
+          background: '#ffffff',
+          color: '#111827',
+          fontFamily: "'Inter',sans-serif",
+          overflowX: 'hidden',
+        }}
+      >
         <style>{`
           @import url('https://fonts.googleapis.com/css2?family=Outfit:wght@400;600;700;800;900&family=Inter:wght@300;400;500;600&display=swap');
           .lnb { padding:10px 22px;border-radius:10px;font-weight:600;font-family:'Outfit',sans-serif;font-size:15px;transition:all .2s;text-decoration:none;display:inline-block; }
@@ -103,58 +149,198 @@ export default function Landing() {
         `}</style>
 
         {/* NAVBAR */}
-        <nav style={{
-          position:'fixed',top:0,left:0,right:0,zIndex:100,
-          display:'flex',alignItems:'center',justifyContent:'space-between',
-          padding:'14px 40px',
-          background:'rgba(255,255,255,.85)',backdropFilter:'blur(20px)',
-          borderBottom:'1px solid #E5E7EB',
-        }}>
-          <span style={{fontFamily:"'Outfit',sans-serif",fontWeight:800,fontSize:22,color:'#111827'}}>
-            🌿 Darukaa<span style={{color:'#1CAAD9'}}>.Earth</span>
+        <nav
+          style={{
+            position: 'fixed',
+            top: 0,
+            left: 0,
+            right: 0,
+            zIndex: 100,
+            display: 'flex',
+            alignItems: 'center',
+            justifyContent: 'space-between',
+            padding: '14px 40px',
+            background: 'rgba(255,255,255,.85)',
+            backdropFilter: 'blur(20px)',
+            borderBottom: '1px solid #E5E7EB',
+          }}
+        >
+          <span
+            style={{
+              fontFamily: "'Outfit',sans-serif",
+              fontWeight: 800,
+              fontSize: 22,
+              color: '#111827',
+            }}
+          >
+            🌿 Darukaa<span style={{ color: '#1CAAD9' }}>.Earth</span>
           </span>
-          <div style={{display:'flex',gap:12}}>
-            <Link to="/login" className="lnb lnb-g">Login</Link>
-            <Link to="/register" className="lnb lnb-s">Get Started →</Link>
+          <div style={{ display: 'flex', gap: 12 }}>
+            <Link to="/login" className="lnb lnb-g">
+              Login
+            </Link>
+            <Link to="/register" className="lnb lnb-s">
+              Get Started →
+            </Link>
           </div>
         </nav>
 
         {/* HERO */}
-        <section style={{position:'relative',minHeight:'100vh',display:'flex',alignItems:'center',justifyContent:'center',padding:'120px 40px 80px',overflow:'hidden',textAlign:'center'}}>
+        <section
+          style={{
+            position: 'relative',
+            minHeight: '100vh',
+            display: 'flex',
+            alignItems: 'center',
+            justifyContent: 'center',
+            padding: '120px 40px 80px',
+            overflow: 'hidden',
+            textAlign: 'center',
+          }}
+        >
           <div className="grid-bg" style={{ zIndex: 0 }} />
-          <div className="hg" style={{width:600,height:600,background:'rgba(28,170,217,.1)',top:'-100px',left:'-100px',animationDelay:'0s', zIndex: 0}}/>
-          <div className="hg" style={{width:500,height:500,background:'rgba(16,185,129,.08)',bottom:'-50px',right:'-80px',animationDelay:'4s', zIndex: 0}}/>
-          
+          <div
+            className="hg"
+            style={{
+              width: 600,
+              height: 600,
+              background: 'rgba(28,170,217,.1)',
+              top: '-100px',
+              left: '-100px',
+              animationDelay: '0s',
+              zIndex: 0,
+            }}
+          />
+          <div
+            className="hg"
+            style={{
+              width: 500,
+              height: 500,
+              background: 'rgba(16,185,129,.08)',
+              bottom: '-50px',
+              right: '-80px',
+              animationDelay: '4s',
+              zIndex: 0,
+            }}
+          />
+
           {/* 3D Background */}
-          <div style={{ position: 'absolute', top: 0, left: 0, width: '100%', height: '100%', zIndex: 1, pointerEvents: 'none', overflow: 'hidden' }}>
-            <iframe 
-              title="Earth Model" 
-              src="https://sketchfab.com/models/f996c2489cfc435eb79399ad1890f8e0/embed?autostart=1&transparent=1&ui_infos=0&ui_stop=0&ui_watermark=0&ui_theme=light&dnt=1" 
-              frameBorder="0" 
-              style={{ width: '110vw', height: '120vh', border: 'none', marginLeft: '-5vw', marginTop: '-10vh' }}
-              allow="autoplay; fullscreen; vr" 
+          <div
+            style={{
+              position: 'absolute',
+              top: 0,
+              left: 0,
+              width: '100%',
+              height: '100%',
+              zIndex: 1,
+              pointerEvents: 'none',
+              overflow: 'hidden',
+            }}
+          >
+            <iframe
+              title="Earth Model"
+              src="https://sketchfab.com/models/f996c2489cfc435eb79399ad1890f8e0/embed?autostart=1&transparent=1&ui_infos=0&ui_stop=0&ui_watermark=0&ui_theme=light&dnt=1"
+              frameBorder="0"
+              style={{
+                width: '110vw',
+                height: '120vh',
+                border: 'none',
+                marginLeft: '-5vw',
+                marginTop: '-10vh',
+              }}
+              allow="autoplay; fullscreen; vr"
               allowFullScreen
             ></iframe>
           </div>
 
-          <div style={{position:'relative',zIndex:2,maxWidth:820, background: 'rgba(255,255,255,0.6)', backdropFilter: 'blur(8px)', WebkitBackdropFilter: 'blur(8px)', padding: '40px', borderRadius: '30px', boxShadow: '0 20px 50px rgba(0,0,0,0.05)', border: '1px solid rgba(255,255,255,0.8)'}}>
-            <div className="fu" style={{marginBottom:20}}>
+          <div
+            style={{
+              position: 'relative',
+              zIndex: 2,
+              maxWidth: 820,
+              background: 'rgba(255,255,255,0.6)',
+              backdropFilter: 'blur(8px)',
+              WebkitBackdropFilter: 'blur(8px)',
+              padding: '40px',
+              borderRadius: '30px',
+              boxShadow: '0 20px 50px rgba(0,0,0,0.05)',
+              border: '1px solid rgba(255,255,255,0.8)',
+            }}
+          >
+            <div className="fu" style={{ marginBottom: 20 }}>
               <span className="bc">🌍 Real-time Geospatial Intelligence</span>
             </div>
-            <h1 className="fu d1" style={{fontFamily:"'Outfit',sans-serif",fontWeight:900,fontSize:'clamp(42px,7vw,80px)',lineHeight:1.05,letterSpacing:'-2px',marginBottom:28}}>
-              <span style={{color:'#111827'}}>Empowering</span><br/>
-              <span style={{background:'linear-gradient(90deg,#1CAAD9,#10B981,#1CAAD9)',backgroundSize:'200%',WebkitBackgroundClip:'text',WebkitTextFillColor:'transparent',animation:'shimmer 4s linear infinite'}}>
+            <h1
+              className="fu d1"
+              style={{
+                fontFamily: "'Outfit',sans-serif",
+                fontWeight: 900,
+                fontSize: 'clamp(42px,7vw,80px)',
+                lineHeight: 1.05,
+                letterSpacing: '-2px',
+                marginBottom: 28,
+              }}
+            >
+              <span style={{ color: '#111827' }}>Empowering</span>
+              <br />
+              <span
+                style={{
+                  background: 'linear-gradient(90deg,#1CAAD9,#10B981,#1CAAD9)',
+                  backgroundSize: '200%',
+                  WebkitBackgroundClip: 'text',
+                  WebkitTextFillColor: 'transparent',
+                  animation: 'shimmer 4s linear infinite',
+                }}
+              >
                 Environmental Action
               </span>
             </h1>
-            <p className="fu d2" style={{fontSize:19,color:'#4B5563',lineHeight:1.7,marginBottom:44,maxWidth:640,marginLeft:'auto',marginRight:'auto', fontWeight: 500}}>
-              A premium geospatial platform for tracking ecological projects, monitoring environmental metrics, and fostering global sustainability through advanced data visualization.
+            <p
+              className="fu d2"
+              style={{
+                fontSize: 19,
+                color: '#4B5563',
+                lineHeight: 1.7,
+                marginBottom: 44,
+                maxWidth: 640,
+                marginLeft: 'auto',
+                marginRight: 'auto',
+                fontWeight: 500,
+              }}
+            >
+              A premium geospatial platform for tracking ecological projects, monitoring
+              environmental metrics, and fostering global sustainability through advanced data
+              visualization.
             </p>
-            <div className="fu d3" style={{display:'flex',gap:14,justifyContent:'center',flexWrap:'wrap'}}>
-              <Link to="/register" className="lnb lnb-s" style={{fontSize:17,padding:'14px 34px'}}>Join the Movement →</Link>
-              <Link to="/login" className="lnb lnb-g" style={{fontSize:17,padding:'14px 34px'}}>View Dashboard</Link>
+            <div
+              className="fu d3"
+              style={{ display: 'flex', gap: 14, justifyContent: 'center', flexWrap: 'wrap' }}
+            >
+              <Link
+                to="/register"
+                className="lnb lnb-s"
+                style={{ fontSize: 17, padding: '14px 34px' }}
+              >
+                Join the Movement →
+              </Link>
+              <Link
+                to="/login"
+                className="lnb lnb-g"
+                style={{ fontSize: 17, padding: '14px 34px' }}
+              >
+                View Dashboard
+              </Link>
             </div>
-            <div className="fu d4" style={{marginTop:36,display:'flex',gap:14,justifyContent:'center',flexWrap:'wrap'}}>
+            <div
+              className="fu d4"
+              style={{
+                marginTop: 36,
+                display: 'flex',
+                gap: 14,
+                justifyContent: 'center',
+                flexWrap: 'wrap',
+              }}
+            >
               <span className="pv">✓ REDD+ Compliant</span>
               <span className="pv">✓ VCS Standards</span>
               <span className="pv">✓ ISO 14064</span>
@@ -163,58 +349,201 @@ export default function Landing() {
         </section>
 
         {/* STATS */}
-        <section style={{padding:'60px 40px',background:'#F9FAFB',borderTop:'1px solid #E5E7EB',borderBottom:'1px solid #E5E7EB'}}>
-          <div style={{maxWidth:1100,margin:'0 auto',display:'grid',gridTemplateColumns:'repeat(auto-fit,minmax(200px,1fr))',gap:20}}>
-            {STATS.map(s => (
+        <section
+          style={{
+            padding: '60px 40px',
+            background: '#F9FAFB',
+            borderTop: '1px solid #E5E7EB',
+            borderBottom: '1px solid #E5E7EB',
+          }}
+        >
+          <div
+            style={{
+              maxWidth: 1100,
+              margin: '0 auto',
+              display: 'grid',
+              gridTemplateColumns: 'repeat(auto-fit,minmax(200px,1fr))',
+              gap: 20,
+            }}
+          >
+            {STATS.map((s) => (
               <div key={s.label} className="sc">
-                <div style={{fontSize:30,marginBottom:10}}>{s.icon}</div>
-                <div style={{fontFamily:"'Outfit',sans-serif",fontWeight:800,fontSize:36,color:'#1CAAD9',letterSpacing:'-1px',lineHeight:1}}>{s.value}</div>
-                <div style={{marginTop:8,color:'#6B7280',fontSize:13,fontWeight:600}}>{s.label}</div>
+                <div style={{ fontSize: 30, marginBottom: 10 }}>{s.icon}</div>
+                <div
+                  style={{
+                    fontFamily: "'Outfit',sans-serif",
+                    fontWeight: 800,
+                    fontSize: 36,
+                    color: '#1CAAD9',
+                    letterSpacing: '-1px',
+                    lineHeight: 1,
+                  }}
+                >
+                  {s.value}
+                </div>
+                <div style={{ marginTop: 8, color: '#6B7280', fontSize: 13, fontWeight: 600 }}>
+                  {s.label}
+                </div>
               </div>
             ))}
           </div>
         </section>
 
         {/* FEATURES */}
-        <section style={{padding:'100px 40px',maxWidth:1100,margin:'0 auto',textAlign:'center'}}>
-          <span className="bc" style={{marginBottom:20,display:'inline-flex'}}>⚡ Core Platform Features</span>
-          <h2 style={{fontFamily:"'Outfit',sans-serif",fontWeight:900,fontSize:'clamp(32px,5vw,54px)',marginBottom:16,marginTop:16,color:'#111827'}}>Built for Impact at Scale</h2>
-          <p style={{color:'#6B7280',fontSize:17,marginBottom:64,maxWidth:560,marginLeft:'auto',marginRight:'auto'}}>
+        <section
+          style={{ padding: '100px 40px', maxWidth: 1100, margin: '0 auto', textAlign: 'center' }}
+        >
+          <span className="bc" style={{ marginBottom: 20, display: 'inline-flex' }}>
+            ⚡ Core Platform Features
+          </span>
+          <h2
+            style={{
+              fontFamily: "'Outfit',sans-serif",
+              fontWeight: 900,
+              fontSize: 'clamp(32px,5vw,54px)',
+              marginBottom: 16,
+              marginTop: 16,
+              color: '#111827',
+            }}
+          >
+            Built for Impact at Scale
+          </h2>
+          <p
+            style={{
+              color: '#6B7280',
+              fontSize: 17,
+              marginBottom: 64,
+              maxWidth: 560,
+              marginLeft: 'auto',
+              marginRight: 'auto',
+            }}
+          >
             Everything you need to manage, verify, and report on conservation projects in one place.
           </p>
-          <div style={{display:'grid',gridTemplateColumns:'repeat(auto-fit,minmax(280px,1fr))',gap:24,textAlign:'left'}}>
-            {FEATURES.map(f => (
+          <div
+            style={{
+              display: 'grid',
+              gridTemplateColumns: 'repeat(auto-fit,minmax(280px,1fr))',
+              gap: 24,
+              textAlign: 'left',
+            }}
+          >
+            {FEATURES.map((f) => (
               <div key={f.title} className="fc">
-                <div style={{fontSize:40,marginBottom:18}}>{f.icon}</div>
-                <h3 style={{fontFamily:"'Outfit',sans-serif",fontWeight:700,fontSize:20,color:'#111827',marginBottom:10}}>{f.title}</h3>
-                <p style={{color:'#4B5563',fontSize:15,lineHeight:1.65,margin:0}}>{f.desc}</p>
+                <div style={{ fontSize: 40, marginBottom: 18 }}>{f.icon}</div>
+                <h3
+                  style={{
+                    fontFamily: "'Outfit',sans-serif",
+                    fontWeight: 700,
+                    fontSize: 20,
+                    color: '#111827',
+                    marginBottom: 10,
+                  }}
+                >
+                  {f.title}
+                </h3>
+                <p style={{ color: '#4B5563', fontSize: 15, lineHeight: 1.65, margin: 0 }}>
+                  {f.desc}
+                </p>
               </div>
             ))}
           </div>
         </section>
 
         {/* CTA BANNER */}
-        <section style={{
-          margin:'0 40px 100px',borderRadius:28,
-          background:'linear-gradient(135deg,#F0FDFA 0%,#EFF6FF 100%)',
-          border:'1px solid #D1FAE5',
-          padding:'72px 40px',textAlign:'center',position:'relative',overflow:'hidden',
-        }}>
-          <div style={{position:'absolute',width:300,height:300,borderRadius:'50%',background:'rgba(28,170,217,.1)',filter:'blur(80px)',top:-60,right:80,pointerEvents:'none'}}/>
-          <h2 style={{fontFamily:"'Outfit',sans-serif",fontWeight:900,fontSize:'clamp(28px,4vw,48px)',color:'#111827',marginBottom:16}}>Start Measuring Your Impact</h2>
-          <p style={{color:'#4B5563',fontSize:17,marginBottom:36,maxWidth:520,marginLeft:'auto',marginRight:'auto'}}>
-            Join hundreds of conservation teams already using Darukaa.Earth to scale their environmental impact.
+        <section
+          style={{
+            margin: '0 40px 100px',
+            borderRadius: 28,
+            background: 'linear-gradient(135deg,#F0FDFA 0%,#EFF6FF 100%)',
+            border: '1px solid #D1FAE5',
+            padding: '72px 40px',
+            textAlign: 'center',
+            position: 'relative',
+            overflow: 'hidden',
+          }}
+        >
+          <div
+            style={{
+              position: 'absolute',
+              width: 300,
+              height: 300,
+              borderRadius: '50%',
+              background: 'rgba(28,170,217,.1)',
+              filter: 'blur(80px)',
+              top: -60,
+              right: 80,
+              pointerEvents: 'none',
+            }}
+          />
+          <h2
+            style={{
+              fontFamily: "'Outfit',sans-serif",
+              fontWeight: 900,
+              fontSize: 'clamp(28px,4vw,48px)',
+              color: '#111827',
+              marginBottom: 16,
+            }}
+          >
+            Start Measuring Your Impact
+          </h2>
+          <p
+            style={{
+              color: '#4B5563',
+              fontSize: 17,
+              marginBottom: 36,
+              maxWidth: 520,
+              marginLeft: 'auto',
+              marginRight: 'auto',
+            }}
+          >
+            Join hundreds of conservation teams already using Darukaa.Earth to scale their
+            environmental impact.
           </p>
-          <Link to="/register" className="lnb lnb-s" style={{fontSize:18,padding:'16px 44px'}}>Create Free Account →</Link>
+          <Link to="/register" className="lnb lnb-s" style={{ fontSize: 18, padding: '16px 44px' }}>
+            Create Free Account →
+          </Link>
         </section>
 
         {/* FOOTER */}
-        <footer style={{borderTop:'1px solid #E5E7EB',padding:'32px 40px',display:'flex',alignItems:'center',justifyContent:'space-between',flexWrap:'wrap',gap:12,background:'#F9FAFB'}}>
-          <span style={{fontFamily:"'Outfit',sans-serif",fontWeight:800,fontSize:18,color:'#111827'}}>🌿 Darukaa<span style={{color:'#1CAAD9'}}>.Earth</span></span>
-          <span style={{color:'#6B7280',fontSize:13}}>© {new Date().getFullYear()} Darukaa Earth. All rights reserved.</span>
-          <div style={{display:'flex',gap:24}}>
-            <Link to="/login" style={{color:'#4B5563',fontSize:13,textDecoration:'none',fontWeight:500}}>Login</Link>
-            <Link to="/register" style={{color:'#4B5563',fontSize:13,textDecoration:'none',fontWeight:500}}>Register</Link>
+        <footer
+          style={{
+            borderTop: '1px solid #E5E7EB',
+            padding: '32px 40px',
+            display: 'flex',
+            alignItems: 'center',
+            justifyContent: 'space-between',
+            flexWrap: 'wrap',
+            gap: 12,
+            background: '#F9FAFB',
+          }}
+        >
+          <span
+            style={{
+              fontFamily: "'Outfit',sans-serif",
+              fontWeight: 800,
+              fontSize: 18,
+              color: '#111827',
+            }}
+          >
+            🌿 Darukaa<span style={{ color: '#1CAAD9' }}>.Earth</span>
+          </span>
+          <span style={{ color: '#6B7280', fontSize: 13 }}>
+            © {new Date().getFullYear()} Darukaa Earth. All rights reserved.
+          </span>
+          <div style={{ display: 'flex', gap: 24 }}>
+            <Link
+              to="/login"
+              style={{ color: '#4B5563', fontSize: 13, textDecoration: 'none', fontWeight: 500 }}
+            >
+              Login
+            </Link>
+            <Link
+              to="/register"
+              style={{ color: '#4B5563', fontSize: 13, textDecoration: 'none', fontWeight: 500 }}
+            >
+              Register
+            </Link>
           </div>
         </footer>
       </div>
