@@ -137,13 +137,17 @@ Copy `.env.example` to `.env` in both `frontend` and `backend`.
 This project uses `husky` and `lint-staged`. Before a commit is created, staged frontend files are automatically formatted using Prettier and linted using ESLint/Oxlint. 
 
 ## CI/CD Workflow
-*To be configured:* GitHub Actions will run on every Pull Request, validating the backend via Pytest/Ruff and the frontend via Vite build/Linting.
+The project implements a robust continuous integration and deployment pipeline using **GitHub Actions**. 
+On every push and pull request to the `main` branch, the workflow (`ci-cd.yml`) automates the following steps:
+1. **Service Containers:** Spins up an ephemeral PostgreSQL container with the PostGIS extension to run integration tests against a real geospatial database.
+2. **Frontend Checks:** Sets up Node.js, installs dependencies, runs linting checks (`npm run lint`), and verifies a successful production build (`npm run build`).
+3. **Backend Checks:** Sets up Python, installs requirements, and executes the `pytest` test suite.
+4. **Automated Deployment:** Upon successful completion of the CI pipeline, the connected platforms (Vercel and Render) automatically trigger deployments to production.
 
 ## Deployment
-*To be configured:*
-- **Database:** Render PostgreSQL (with PostGIS enabled).
-- **Backend:** Render Web Service.
-- **Frontend:** Vercel.
+- **Database:** Render PostgreSQL Database (with PostGIS enabled).
+- **Backend:** Render Web Service running FastAPI.
+- **Frontend:** Vercel automatically building and deploying the Vite React application.
 
 ## Sample Data
 *Note: Once implemented, the application will include a seed script providing demo carbon and biodiversity projects. All seeded data is purely illustrative.*
