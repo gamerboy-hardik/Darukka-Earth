@@ -156,7 +156,7 @@ export default function Analytics() {
               {allProjects.map(p => (
                 <button 
                   key={p.id}
-                  onClick={() => window.location.href = \`/analytics?projectId=\${p.id}\`}
+                  onClick={() => window.location.href = `/analytics?projectId=${p.id}`}
                   className={`list-group-item list-group-item-action ${projectId === String(p.id) ? 'active' : ''}`}
                   style={projectId === String(p.id) ? { background: '#111827', borderColor: '#111827', color: '#fff' } : {}}
                 >
@@ -385,13 +385,12 @@ export default function Analytics() {
                       ></iframe>
                     </div>
                   </div>
-                  </div>
                 </div>
               </div>
             </div>
-          </div>
           </>
         )}
+        </div>
         </div>
       </main>
     </div>
