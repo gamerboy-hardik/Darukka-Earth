@@ -119,7 +119,8 @@ export default function Dashboard() {
   });
 
   return (
-    <div id="page-top" style={{ height: '100vh', display: 'flex', flexDirection: 'column', fontFamily: "'Inter', system-ui, sans-serif", background: '#fff' }}>
+    <>
+      <div id="page-top" style={{ height: '100vh', display: 'flex', flexDirection: 'column', fontFamily: "'Inter', system-ui, sans-serif", background: '#fff' }}>
 
       {/* ── NAVBAR ── */}
       <header style={{ background: '#fff', borderBottom: '1px solid #e5e7eb', zIndex: 1000, flexShrink: 0 }}>
@@ -340,7 +341,7 @@ export default function Dashboard() {
           </div>
         </div>
       )}
-    </div>
+    </>
   );
 }
 
