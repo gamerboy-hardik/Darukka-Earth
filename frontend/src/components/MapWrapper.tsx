@@ -40,6 +40,14 @@ const PROJECT_COORDINATES: Record<string, { lat: number, lng: number }> = {
   "Cauvery Basin Revitalization": { lat: 11.9338, lng: 79.8297 }
 };
 
+const PROJECT_POLYGONS: Record<string, any> = {
+  "Sundarbans Mangrove Restoration": {"type": "FeatureCollection", "features": [{"type": "Feature", "properties": {}, "geometry": {"type": "Polygon", "coordinates": [[[89.1333, 21.8997], [89.2333, 21.8997], [89.2333, 21.9997], [89.1333, 21.9997], [89.1333, 21.8997]]]}}]},
+  "Western Ghats Reforestation": {"type": "FeatureCollection", "features": [{"type": "Feature", "properties": {}, "geometry": {"type": "Polygon", "coordinates": [[[74.95, 13.45], [75.05, 13.45], [75.05, 13.55], [74.95, 13.55], [74.95, 13.45]]]}}]},
+  "Thar Desert Greening": {"type": "FeatureCollection", "features": [{"type": "Feature", "properties": {}, "geometry": {"type": "Polygon", "coordinates": [[[70.8548, 26.8624], [70.95479999999999, 26.8624], [70.95479999999999, 26.962400000000002], [70.8548, 26.962400000000002], [70.8548, 26.8624]]]}}]},
+  "Himalayan Pine Protection": {"type": "FeatureCollection", "features": [{"type": "Feature", "properties": {}, "geometry": {"type": "Polygon", "coordinates": [[[78.9693, 30.0168], [79.0693, 30.0168], [79.0693, 30.1168], [78.9693, 30.1168], [78.9693, 30.0168]]]}}]},
+  "Cauvery Basin Revitalization": {"type": "FeatureCollection", "features": [{"type": "Feature", "properties": {}, "geometry": {"type": "Polygon", "coordinates": [[[79.7797, 11.883799999999999], [79.8797, 11.883799999999999], [79.8797, 11.9838], [79.7797, 11.9838], [79.7797, 11.883799999999999]]]}}]},
+};
+
 interface MapWrapperProps {
   projects?: any[];
   clickedProject?: any;
@@ -196,17 +204,24 @@ export default function MapWrapper({ projects = [], clickedProject = null, setCl
 
         {/* Polygons */}
         {projects.map((project, idx) => {
-          if (!project.boundary_geojson) return null;
           let geojson = null;
-          try {
-            geojson = JSON.parse(project.boundary_geojson);
-          } catch (e) {
-            return null;
+          if (project.boundary_geojson) {
+            try {
+              geojson = JSON.parse(project.boundary_geojson);
+            } catch (e) {
+              geojson = null;
+            }
           }
+          if (!geojson && PROJECT_POLYGONS[project.name]) {
+            geojson = PROJECT_POLYGONS[project.name];
+          }
+
+          if (!geojson) return null;
+
           return (
-            <Source key={`source-${project.id}`} id={`source-${project.id}`} type="geojson" data={geojson}>
+            <Source key={`source-${project.id || idx}`} id={`source-${project.id || idx}`} type="geojson" data={geojson}>
               <Layer
-                id={`layer-${project.id}`}
+                id={`layer-${project.id || idx}`}
                 type="fill"
                 paint={{
                   'fill-color': '#1CAAD9',
