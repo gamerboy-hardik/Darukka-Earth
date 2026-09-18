@@ -61,6 +61,14 @@ export default function Dashboard() {
     boundary_geojson: ''
   });
 
+  const [modalViewState, setModalViewState] = useState({
+    longitude: 78.9629,
+    latitude: 20.5937,
+    zoom: 3
+  });
+  const [searchLocation, setSearchLocation] = useState('');
+  const [isSearchingLocation, setIsSearchingLocation] = useState(false);
+
   const onDrawUpdate = React.useCallback((e: { features: any[] }) => {
     if (e.features && e.features.length > 0) {
       setNewProject(prev => ({
@@ -74,6 +82,29 @@ export default function Dashboard() {
       setNewProject(prev => ({ ...prev, boundary_geojson: '' }));
     }
   }, []);
+
+  const handleLocationSearch = async () => {
+    if (!searchLocation.trim()) return;
+    setIsSearchingLocation(true);
+    try {
+      const res = await fetch(`https://api.mapbox.com/geocoding/v5/mapbox.places/${encodeURIComponent(searchLocation)}.json?access_token=${MAPBOX_TOKEN}`);
+      const data = await res.json();
+      if (data.features && data.features.length > 0) {
+        const [lng, lat] = data.features[0].center;
+        setModalViewState({
+          longitude: lng,
+          latitude: lat,
+          zoom: 12
+        });
+      } else {
+        alert("Location not found. Please try again.");
+      }
+    } catch (error) {
+      alert("Error searching location.");
+    } finally {
+      setIsSearchingLocation(false);
+    }
+  };
 
   const handleLogout = () => {
     logout();
@@ -345,6 +376,32 @@ export default function Dashboard() {
                 <label style={{ display: 'block', fontSize: '13px', fontWeight: 600, color: '#374151' }}>
                   Project Area (Optional: Draw on map or enter coordinates)
                 </label>
+                
+                {/* Location Search */}
+                <div style={{ display: 'flex', gap: '8px', marginBottom: '4px' }}>
+                  <input 
+                    type="text" 
+                    value={searchLocation} 
+                    onChange={e => setSearchLocation(e.target.value)} 
+                    onKeyDown={e => {
+                      if (e.key === 'Enter') {
+                        e.preventDefault();
+                        handleLocationSearch();
+                      }
+                    }}
+                    style={{ flex: 1, padding: '8px 12px', border: '1px solid #d1d5db', borderRadius: '8px', fontSize: '13px' }} 
+                    placeholder="Search State or City to auto-zoom..." 
+                  />
+                  <button 
+                    type="button" 
+                    onClick={handleLocationSearch} 
+                    disabled={isSearchingLocation}
+                    style={{ padding: '8px 16px', background: '#f3f4f6', border: '1px solid #d1d5db', borderRadius: '8px', fontSize: '13px', fontWeight: 600, cursor: 'pointer', color: '#374151' }}
+                  >
+                    {isSearchingLocation ? '...' : 'Search'}
+                  </button>
+                </div>
+
                 <div style={{ display: 'flex', gap: '16px', marginBottom: '8px' }}>
                   <div style={{ flex: 1 }}>
                     <input type="number" step="any" value={newProject.latitude} onChange={e => setNewProject({...newProject, latitude: e.target.value})} style={{ width: '100%', padding: '8px 12px', border: '1px solid #d1d5db', borderRadius: '8px', fontSize: '13px' }} placeholder="Latitude (e.g. 21.9497)" />
@@ -356,9 +413,11 @@ export default function Dashboard() {
                 <div style={{ height: '220px', width: '100%', borderRadius: '8px', overflow: 'hidden', border: '1px solid #d1d5db', position: 'relative' }}>
                   {MAPBOX_TOKEN ? (
                     <Map
-                      initialViewState={{ longitude: 78.9629, latitude: 20.5937, zoom: 3 }}
+                      {...modalViewState}
+                      onMove={evt => setModalViewState(evt.viewState)}
                       mapStyle="mapbox://styles/mapbox/satellite-v9"
                       mapboxAccessToken={MAPBOX_TOKEN}
+                      style={{ cursor: 'crosshair' }}
                     >
                       <DrawControl
                         position="top-left"
