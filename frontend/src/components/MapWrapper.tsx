@@ -42,9 +42,12 @@ const PROJECT_COORDINATES: Record<string, { lat: number, lng: number }> = {
 
 interface MapWrapperProps {
   projects?: any[];
+  clickedProject?: any;
+  setClickedProject?: (p: any) => void;
 }
 
-export default function MapWrapper({ projects = [] }: MapWrapperProps) {
+export default function MapWrapper({ projects = [], clickedProject = null, setClickedProject = () => {} }: MapWrapperProps) {
+  const mapRef = React.useRef<any>(null);
   const [viewState, setViewState] = useState({
     longitude: 78.9629,
     latitude: 20.5937,
@@ -53,7 +56,23 @@ export default function MapWrapper({ projects = [] }: MapWrapperProps) {
   
   const [mapStyle, setMapStyle] = useState(MAP_STYLES[3].url); // Streets - matches reference
   const [hoveredProject, setHoveredProject] = useState<any | null>(null);
-  const [clickedProject, setClickedProject] = useState<any | null>(null);
+
+  useEffect(() => {
+    if (clickedProject && mapRef.current) {
+      let lat = clickedProject.latitude;
+      let lng = clickedProject.longitude;
+      if (!lat || !lng) {
+        const fallback = PROJECT_COORDINATES[clickedProject.name];
+        if (fallback) {
+          lat = fallback.lat;
+          lng = fallback.lng;
+        }
+      }
+      if (lat && lng) {
+        mapRef.current.flyTo({ center: [lng, lat], zoom: 8, duration: 1500 });
+      }
+    }
+  }, [clickedProject]);
 
   if (!MAPBOX_TOKEN) {
     return (
@@ -95,6 +114,7 @@ export default function MapWrapper({ projects = [] }: MapWrapperProps) {
       </div>
 
       <Map
+        ref={mapRef}
         {...viewState}
         onMove={(evt: ViewStateChangeEvent) => setViewState(evt.viewState)}
         mapStyle={mapStyle}

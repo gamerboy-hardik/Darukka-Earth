@@ -100,12 +100,17 @@ export default function Dashboard() {
 
   const onDrawUpdate = React.useCallback((e: { features: any[] }) => {
     if (e.features && e.features.length > 0) {
+      const firstCoord = e.features[0].geometry?.coordinates?.[0]?.[0];
       setNewProject(prev => ({
         ...prev,
         boundary_geojson: JSON.stringify({
           type: "FeatureCollection",
           features: e.features
-        })
+        }),
+        ...(firstCoord && !prev.latitude && !prev.longitude ? {
+           longitude: firstCoord[0].toString(),
+           latitude: firstCoord[1].toString()
+        } : {})
       }));
     } else {
       setNewProject(prev => ({ ...prev, boundary_geojson: '' }));
