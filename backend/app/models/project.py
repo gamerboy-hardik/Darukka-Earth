@@ -1,5 +1,5 @@
 from datetime import datetime
-from sqlalchemy import Column, Integer, String, DateTime, ForeignKey
+from sqlalchemy import Column, Integer, String, DateTime, ForeignKey, Float
 from sqlalchemy.orm import relationship
 
 from app.db.base_class import Base
@@ -13,6 +13,8 @@ class Project(Base):
     project_type = Column(String, index=True) # carbon, biodiversity, mixed
     status = Column(String, index=True, default="draft") # draft, active, completed, paused
     owner_id = Column(Integer, ForeignKey("user.id"), nullable=False)
+    latitude = Column(Float, nullable=True)
+    longitude = Column(Float, nullable=True)
     created_at = Column(DateTime, default=datetime.utcnow)
     updated_at = Column(DateTime, default=datetime.utcnow, onupdate=datetime.utcnow)
 

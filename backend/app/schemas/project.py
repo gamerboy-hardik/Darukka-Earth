@@ -7,6 +7,8 @@ class ProjectBase(BaseModel):
     description: Optional[str] = None
     project_type: str # carbon, biodiversity, mixed
     status: Optional[str] = "draft"
+    latitude: Optional[float] = None
+    longitude: Optional[float] = None
 
 class ProjectCreate(ProjectBase):
     pass

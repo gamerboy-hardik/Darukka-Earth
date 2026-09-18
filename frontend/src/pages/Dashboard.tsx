@@ -44,9 +44,43 @@ export default function Dashboard() {
   const [viewMode, setViewMode] = useState<'grid' | 'list'>('grid');
   const [showMore, setShowMore] = useState(false);
 
+  // Add Project Modal State
+  const [isModalOpen, setIsModalOpen] = useState(false);
+  const [isSubmitting, setIsSubmitting] = useState(false);
+  const [newProject, setNewProject] = useState({
+    name: '',
+    description: '',
+    project_type: 'carbon',
+    latitude: '',
+    longitude: ''
+  });
+
   const handleLogout = () => {
     logout();
     navigate('/login');
+  };
+
+  const handleAddProject = async (e: React.FormEvent) => {
+    e.preventDefault();
+    setIsSubmitting(true);
+    try {
+      const payload = {
+        name: newProject.name,
+        description: newProject.description,
+        project_type: newProject.project_type,
+        status: "active",
+        latitude: newProject.latitude ? parseFloat(newProject.latitude) : null,
+        longitude: newProject.longitude ? parseFloat(newProject.longitude) : null,
+      };
+      const res = await api.post('/projects/', payload);
+      setProjects([res.data, ...projects]);
+      setIsModalOpen(false);
+      setNewProject({ name: '', description: '', project_type: 'carbon', latitude: '', longitude: '' });
+    } catch (error) {
+      alert("Failed to add project. Please try again.");
+    } finally {
+      setIsSubmitting(false);
+    }
   };
 
   useEffect(() => {
@@ -113,7 +147,7 @@ export default function Dashboard() {
               <i className="fa fa-chart-bar" style={{ marginRight: '6px', color: '#1CAAD9' }}></i>Reports
             </button>
             <button
-              onClick={() => alert('New Project creation flow coming soon!')}
+              onClick={() => setIsModalOpen(true)}
               style={{ padding: '7px 16px', border: 'none', borderRadius: '8px', background: '#111827', fontSize: '13px', fontWeight: 600, color: '#fff', cursor: 'pointer' }}
             >
               <i className="fa fa-plus" style={{ marginRight: '6px', fontSize: '11px' }}></i>
@@ -251,8 +285,55 @@ export default function Dashboard() {
               </div>
             )}
           </div>
+          </div>
         </div>
       </div>
+
+      {/* ── ADD PROJECT MODAL ── */}
+      {isModalOpen && (
+        <div style={{ position: 'fixed', top: 0, left: 0, width: '100vw', height: '100vh', background: 'rgba(17, 24, 39, 0.7)', display: 'flex', alignItems: 'center', justifyContent: 'center', zIndex: 9999 }}>
+          <div style={{ background: '#fff', padding: '30px', borderRadius: '16px', width: '90%', maxWidth: '500px', boxShadow: '0 25px 50px -12px rgba(0,0,0,0.25)' }}>
+            <h3 style={{ margin: '0 0 20px 0', fontSize: '20px', color: '#111827', fontWeight: 700 }}>Add New Project</h3>
+            <form onSubmit={handleAddProject} style={{ display: 'flex', flexDirection: 'column', gap: '16px' }}>
+              <div>
+                <label style={{ display: 'block', fontSize: '13px', fontWeight: 600, color: '#374151', marginBottom: '6px' }}>Project Name</label>
+                <input required type="text" value={newProject.name} onChange={e => setNewProject({...newProject, name: e.target.value})} style={{ width: '100%', padding: '10px 14px', border: '1px solid #d1d5db', borderRadius: '8px', fontSize: '14px' }} placeholder="e.g. Sundarbans Restoration" />
+              </div>
+              <div>
+                <label style={{ display: 'block', fontSize: '13px', fontWeight: 600, color: '#374151', marginBottom: '6px' }}>Description</label>
+                <textarea required rows={3} value={newProject.description} onChange={e => setNewProject({...newProject, description: e.target.value})} style={{ width: '100%', padding: '10px 14px', border: '1px solid #d1d5db', borderRadius: '8px', fontSize: '14px', resize: 'vertical' }} placeholder="Brief overview of the project..." />
+              </div>
+              <div style={{ display: 'flex', gap: '16px' }}>
+                <div style={{ flex: 1 }}>
+                  <label style={{ display: 'block', fontSize: '13px', fontWeight: 600, color: '#374151', marginBottom: '6px' }}>Project Type</label>
+                  <select value={newProject.project_type} onChange={e => setNewProject({...newProject, project_type: e.target.value})} style={{ width: '100%', padding: '10px 14px', border: '1px solid #d1d5db', borderRadius: '8px', fontSize: '14px', background: '#fff' }}>
+                    <option value="carbon">Carbon</option>
+                    <option value="biodiversity">Biodiversity</option>
+                    <option value="mixed">Mixed</option>
+                  </select>
+                </div>
+              </div>
+              <div style={{ display: 'flex', gap: '16px' }}>
+                <div style={{ flex: 1 }}>
+                  <label style={{ display: 'block', fontSize: '13px', fontWeight: 600, color: '#374151', marginBottom: '6px' }}>Latitude</label>
+                  <input type="number" step="any" value={newProject.latitude} onChange={e => setNewProject({...newProject, latitude: e.target.value})} style={{ width: '100%', padding: '10px 14px', border: '1px solid #d1d5db', borderRadius: '8px', fontSize: '14px' }} placeholder="e.g. 21.9497" />
+                </div>
+                <div style={{ flex: 1 }}>
+                  <label style={{ display: 'block', fontSize: '13px', fontWeight: 600, color: '#374151', marginBottom: '6px' }}>Longitude</label>
+                  <input type="number" step="any" value={newProject.longitude} onChange={e => setNewProject({...newProject, longitude: e.target.value})} style={{ width: '100%', padding: '10px 14px', border: '1px solid #d1d5db', borderRadius: '8px', fontSize: '14px' }} placeholder="e.g. 89.1833" />
+                </div>
+              </div>
+              
+              <div style={{ display: 'flex', justifyContent: 'flex-end', gap: '12px', marginTop: '10px' }}>
+                <button type="button" onClick={() => setIsModalOpen(false)} style={{ padding: '9px 18px', background: '#f3f4f6', border: 'none', borderRadius: '8px', color: '#374151', fontSize: '14px', fontWeight: 600, cursor: 'pointer' }}>Cancel</button>
+                <button type="submit" disabled={isSubmitting} style={{ padding: '9px 24px', background: '#1CAAD9', border: 'none', borderRadius: '8px', color: '#fff', fontSize: '14px', fontWeight: 600, cursor: isSubmitting ? 'not-allowed' : 'pointer', opacity: isSubmitting ? 0.7 : 1 }}>
+                  {isSubmitting ? 'Saving...' : 'Publish Project'}
+                </button>
+              </div>
+            </form>
+          </div>
+        </div>
+      )}
     </div>
   );
 }
