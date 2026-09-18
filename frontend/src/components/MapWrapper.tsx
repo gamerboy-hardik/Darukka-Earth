@@ -1,5 +1,6 @@
-import React, { useState, useEffect } from 'react';
+import React, { useState } from 'react';
 import Map, { NavigationControl, Marker, type ViewStateChangeEvent } from 'react-map-gl/mapbox';
+import { motion } from 'framer-motion';
 import 'mapbox-gl/dist/mapbox-gl.css';
 
 const MAPBOX_TOKEN = import.meta.env.VITE_MAPBOX_TOKEN || '';
@@ -10,6 +11,15 @@ const MAP_STYLES = [
   { id: 'satellite-v9', name: 'Satellite', url: 'mapbox://styles/mapbox/satellite-v9' },
   { id: 'streets-v12', name: 'Streets', url: 'mapbox://styles/mapbox/streets-v12' },
 ];
+
+// Fallback coordinates for seeded projects since they don't have lat/lng in DB
+const PROJECT_COORDINATES: Record<string, { lat: number, lng: number }> = {
+  "Sundarbans Mangrove Restoration": { lat: 21.9497, lng: 89.1833 },
+  "Western Ghats Reforestation": { lat: 13.5, lng: 75.0 },
+  "Thar Desert Greening": { lat: 26.9124, lng: 70.9048 },
+  "Himalayan Pine Protection": { lat: 30.0668, lng: 79.0193 },
+  "Cauvery Basin Revitalization": { lat: 11.9338, lng: 79.8297 }
+};
 
 interface MapWrapperProps {
   projects?: any[];
@@ -72,39 +82,69 @@ export default function MapWrapper({ projects = [] }: MapWrapperProps) {
       >
         <NavigationControl position="bottom-right" />
         
-        {projects.map((project, idx) => (
-          project.longitude && project.latitude && (
+        {projects.map((project, idx) => {
+          const coords = PROJECT_COORDINATES[project.name] || { lat: project.latitude, lng: project.longitude };
+          if (!coords.lat || !coords.lng) return null;
+          
+          return (
             <Marker 
               key={project.id || idx}
-              longitude={project.longitude}
-              latitude={project.latitude}
-              anchor="center"
+              longitude={coords.lng}
+              latitude={coords.lat}
+              anchor="bottom"
             >
-              <div style={{
-                width: '32px',
-                height: '32px',
-                borderRadius: '50%',
-                background: '#1CAAD9',
-                border: '3px solid #fff',
-                boxShadow: '0 2px 8px rgba(0,0,0,0.3)',
-                display: 'flex',
-                alignItems: 'center',
-                justifyContent: 'center',
-                color: '#fff',
-                fontWeight: 700,
-                fontSize: '13px',
-                cursor: 'pointer',
-                transition: 'transform 0.15s ease',
-                fontFamily: "'Inter', sans-serif",
-              }}
-              onMouseEnter={(e) => (e.currentTarget.style.transform = 'scale(1.2)')}
-              onMouseLeave={(e) => (e.currentTarget.style.transform = 'scale(1)')}
+              <motion.div 
+                initial={{ scale: 0, y: 20 }}
+                animate={{ scale: 1, y: 0 }}
+                transition={{ 
+                  type: "spring",
+                  stiffness: 260,
+                  damping: 20,
+                  delay: idx * 0.1 
+                }}
+                whileHover={{ scale: 1.2 }}
+                whileTap={{ scale: 0.9 }}
+                onClick={() => {
+                  // Pan to marker on click
+                  setViewState({
+                    ...viewState,
+                    longitude: coords.lng,
+                    latitude: coords.lat,
+                    zoom: 6
+                  });
+                }}
+                style={{
+                  cursor: 'pointer',
+                  position: 'relative'
+                }}
               >
-                {idx + 1}
-              </div>
+                {/* Custom Map Pin Icon */}
+                <div style={{
+                  width: '36px',
+                  height: '36px',
+                  background: 'linear-gradient(135deg, #1CAAD9 0%, #0d8eb8 100%)',
+                  borderRadius: '50% 50% 50% 0',
+                  transform: 'rotate(-45deg)',
+                  boxShadow: '0 4px 12px rgba(28, 170, 217, 0.4)',
+                  display: 'flex',
+                  alignItems: 'center',
+                  justifyContent: 'center',
+                  border: '2px solid #fff'
+                }}>
+                  <div style={{
+                    transform: 'rotate(45deg)',
+                    color: '#fff',
+                    fontSize: '14px',
+                    fontWeight: 'bold',
+                    marginTop: '-2px'
+                  }}>
+                    {idx + 1}
+                  </div>
+                </div>
+              </motion.div>
             </Marker>
-          )
-        ))}
+          );
+        })}
       </Map>
     </div>
   );

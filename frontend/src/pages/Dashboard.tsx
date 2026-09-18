@@ -101,15 +101,19 @@ export default function Dashboard() {
 
           {/* Right Side */}
           <div style={{ display: 'flex', alignItems: 'center', gap: '12px', flexShrink: 0 }}>
-            <span style={{ fontSize: '14px', color: '#6B7280' }}>
-              <i className="fa fa-user-circle" style={{ marginRight: '6px' }}></i>
-              {user?.full_name || user?.email}
+            <span 
+              onClick={handleLogout}
+              style={{ fontSize: '14px', color: '#6B7280', cursor: 'pointer', display: 'flex', alignItems: 'center' }}
+              title="Click to logout"
+            >
+              <i className="fa fa-sign-out-alt" style={{ marginRight: '6px' }}></i>
+              Logout
             </span>
             <button onClick={() => navigate('/analytics')} style={{ padding: '7px 16px', border: '1px solid #e5e7eb', borderRadius: '8px', background: '#fff', fontSize: '13px', fontWeight: 500, color: '#374151', cursor: 'pointer' }}>
               <i className="fa fa-chart-bar" style={{ marginRight: '6px', color: '#1CAAD9' }}></i>Reports
             </button>
             <button
-              onClick={handleLogout}
+              onClick={() => alert('New Project creation flow coming soon!')}
               style={{ padding: '7px 16px', border: 'none', borderRadius: '8px', background: '#111827', fontSize: '13px', fontWeight: 600, color: '#fff', cursor: 'pointer' }}
             >
               <i className="fa fa-plus" style={{ marginRight: '6px', fontSize: '11px' }}></i>
