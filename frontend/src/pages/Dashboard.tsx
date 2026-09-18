@@ -197,6 +197,7 @@ export default function Dashboard() {
                 {showMore ? 'Less Options' : 'More Options'}
               </button>
               <button
+                onClick={() => alert("Search and filtering functionality coming soon!")}
                 style={{ padding: '9px 28px', background: '#1CAAD9', border: 'none', borderRadius: '8px', color: '#fff', fontSize: '13px', fontWeight: 700, cursor: 'pointer' }}
               >
                 Search

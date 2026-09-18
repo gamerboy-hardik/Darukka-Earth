@@ -82,7 +82,7 @@ export default function Analytics() {
       <main className="container mt-4 pt-4 position-relative" style={{ zIndex: 10 }}>
         <div className="d-flex justify-content-between align-items-center mb-4">
           <h2 className="text-dark font-weight-bold"><i className="fa fa-chart-line mr-2" style={{ color: 'var(--primary)' }}></i> Project Impact Analytics</h2>
-          <button className="btn btn-premium"><i className="fa fa-download mr-2"></i> Export Report</button>
+          <button onClick={() => alert("PDF report generation coming soon!")} className="btn btn-premium"><i className="fa fa-download mr-2"></i> Export Report</button>
         </div>
 
         {loading ? (

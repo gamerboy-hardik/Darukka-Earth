@@ -50,7 +50,7 @@ export default function ProjectCard({ project }: ProjectCardProps) {
       </div>
       
       <div className="card-footer bg-white border-top-0 pt-2 pb-3">
-        <Link to={`/projects/${project.id}`} className="btn btn-premium btn-sm w-100" style={{ padding: '8px 0', fontSize: '0.9rem' }}>
+        <Link to="/analytics" onClick={() => console.log('Viewing details for', project.name)} className="btn btn-premium btn-sm w-100" style={{ padding: '8px 0', fontSize: '0.9rem' }}>
           View Details
         </Link>
       </div>
