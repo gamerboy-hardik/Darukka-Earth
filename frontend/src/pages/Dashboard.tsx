@@ -69,6 +69,7 @@ export default function Dashboard() {
   const [searchLocation, setSearchLocation] = useState('');
   const [isSearchingLocation, setIsSearchingLocation] = useState(false);
   const [recommendedLocation, setRecommendedLocation] = useState<{name: string, lng: number, lat: number} | null>(null);
+  const [clickedProject, setClickedProject] = useState<any | null>(null);
 
   // Debounced effect to fetch recommended location based on Project Name
   useEffect(() => {
@@ -247,9 +248,13 @@ export default function Dashboard() {
       {/* ── MAIN SPLIT LAYOUT ── */}
       <div style={{ display: 'flex', flex: 1, overflow: 'hidden' }}>
 
-        {/* ── LEFT: FULL MAP ── */}
-        <div style={{ flex: '1 1 50%', position: 'relative', minWidth: 0 }}>
-          <MapWrapper projects={projects} />
+        {/* Map Area */}
+        <div style={{ flex: 1, position: 'relative' }}>
+          <MapWrapper 
+            projects={projects} 
+            clickedProject={clickedProject}
+            setClickedProject={setClickedProject}
+          />
         </div>
 
         {/* ── RIGHT: FILTER + RESULTS ── */}
@@ -361,13 +366,13 @@ export default function Dashboard() {
             ) : viewMode === 'grid' ? (
               <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: '16px' }}>
                 {filtered.map((project, idx) => (
-                  <ProjectGridCard key={project.id} project={project} idx={idx} />
+                  <ProjectGridCard key={project.id} project={project} idx={idx} setClickedProject={setClickedProject} />
                 ))}
               </div>
             ) : (
               <div style={{ display: 'flex', flexDirection: 'column', gap: '12px' }}>
                 {filtered.map((project, idx) => (
-                  <ProjectListCard key={project.id} project={project} idx={idx} />
+                  <ProjectListCard key={project.id} project={project} idx={idx} setClickedProject={setClickedProject} />
                 ))}
               </div>
             )}
@@ -468,6 +473,7 @@ export default function Dashboard() {
                         position="top-left"
                         displayControlsDefault={false}
                         controls={{ polygon: true, trash: true }}
+                        defaultMode="draw_polygon"
                         onCreate={onDrawUpdate}
                         onUpdate={onDrawUpdate}
                         onDelete={onDrawUpdate}
@@ -494,7 +500,7 @@ export default function Dashboard() {
 }
 
 /* ── GRID CARD ── */
-function ProjectGridCard({ project, idx }: { project: any; idx: number }) {
+function ProjectGridCard({ project, idx, setClickedProject }: { project: any; idx: number; setClickedProject: any }) {
   const [hovered, setHovered] = useState(false);
   const img = PROJECT_IMAGES[idx % PROJECT_IMAGES.length];
   const typeColor = TYPE_COLORS[project.project_type] || '#6B7280';
@@ -502,6 +508,7 @@ function ProjectGridCard({ project, idx }: { project: any; idx: number }) {
 
   return (
     <div
+      onClick={() => setClickedProject(project)}
       onMouseEnter={() => setHovered(true)}
       onMouseLeave={() => setHovered(false)}
       style={{
@@ -516,45 +523,35 @@ function ProjectGridCard({ project, idx }: { project: any; idx: number }) {
       }}
     >
       {/* Image */}
-      <div style={{ position: 'relative', height: '140px', overflow: 'hidden' }}>
-        <img
-          src={img}
-          alt={project.name}
-          style={{ width: '100%', height: '100%', objectFit: 'cover', transition: 'transform 0.3s ease', transform: hovered ? 'scale(1.05)' : 'scale(1)' }}
-        />
-        {/* Like badge */}
-        <div style={{ position: 'absolute', top: '10px', right: '10px', background: typeColor, borderRadius: '6px', padding: '3px 8px', fontSize: '11px', fontWeight: 700, color: '#fff', letterSpacing: '0.5px' }}>
-          {project.project_type.toUpperCase()}
-        </div>
-        <div style={{ position: 'absolute', bottom: 0, left: 0, right: 0, height: '60px', background: 'linear-gradient(to top, rgba(0,0,0,0.5), transparent)' }} />
-        <div style={{ position: 'absolute', bottom: '10px', left: '12px', right: '12px' }}>
-          <div style={{ fontSize: '13px', fontWeight: 700, color: '#fff', lineHeight: 1.3 }}>{project.name}</div>
+      <div style={{ height: '140px', background: `url(${img}) center/cover` }}>
+        <div style={{ padding: '12px', display: 'flex', justifyContent: 'flex-end' }}>
+          <span style={{ background: '#111827', color: typeColor, fontSize: '10px', fontWeight: 800, padding: '4px 10px', borderRadius: '20px', textTransform: 'uppercase', letterSpacing: '0.5px' }}>
+            {project.project_type}
+          </span>
         </div>
       </div>
-
-      {/* Body */}
-      <div style={{ padding: '12px' }}>
-        <div style={{ display: 'flex', alignItems: 'center', gap: '4px', marginBottom: '8px' }}>
-          <i className="fa fa-map-marker-alt" style={{ fontSize: '11px', color: '#9CA3AF' }}></i>
-          <span style={{ fontSize: '12px', color: '#6B7280', overflow: 'hidden', textOverflow: 'ellipsis', whiteSpace: 'nowrap' }}>
-            {INDIA_REGIONS[project.id] || 'India'}
-          </span>
+      
+      <div style={{ padding: '16px' }}>
+        <h4 style={{ margin: '0 0 8px 0', fontSize: '15px', fontWeight: 700, color: '#111827', display: '-webkit-box', WebkitLineClamp: 2, WebkitBoxOrient: 'vertical', overflow: 'hidden', lineHeight: 1.4 }}>
+          {project.name}
+        </h4>
+        <div style={{ display: 'flex', alignItems: 'center', gap: '6px', color: '#6B7280', fontSize: '12px', marginBottom: '16px' }}>
+          <i className="fa fa-map-marker" style={{ color: '#9CA3AF' }} />
+          <span>{['Sundarbans', 'Cauvery', 'Maharashtra', 'Thar', 'Western Ghats', 'Himalayan'].find(l => project.name.includes(l))} India</span>
         </div>
 
-        <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', paddingTop: '8px', borderTop: '1px solid #f3f4f6' }}>
-          <div style={{ display: 'flex', gap: '12px' }}>
-            <span style={{ fontSize: '11px', color: '#6B7280' }}>
-              <span style={{ fontWeight: 700, color: '#111827', display: 'block' }}>5,000+</span>
-              tCO2e
-            </span>
-            <span style={{ fontSize: '11px', color: '#6B7280' }}>
-              <span style={{ fontWeight: 700, color: '#111827', display: 'block' }}>4.2</span>
-              Bio Score
-            </span>
+        <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'flex-end', paddingTop: '12px', borderTop: '1px solid #f3f4f6' }}>
+          <div>
+            <div style={{ fontSize: '14px', fontWeight: 700, color: '#111827' }}>5,000+</div>
+            <div style={{ fontSize: '11px', color: '#6B7280' }}>tCO2e</div>
           </div>
-          <span style={{ fontSize: '11px', fontWeight: 700, color: statusColor, background: statusColor + '18', padding: '3px 8px', borderRadius: '20px' }}>
-            {project.status.toUpperCase()}
-          </span>
+          <div>
+            <div style={{ fontSize: '14px', fontWeight: 700, color: '#111827' }}>4.2</div>
+            <div style={{ fontSize: '11px', color: '#6B7280' }}>Bio Score</div>
+          </div>
+          <div style={{ color: statusColor, fontSize: '11px', fontWeight: 800, textTransform: 'uppercase' }}>
+            {project.status}
+          </div>
         </div>
       </div>
     </div>
@@ -562,13 +559,29 @@ function ProjectGridCard({ project, idx }: { project: any; idx: number }) {
 }
 
 /* ── LIST CARD ── */
-function ProjectListCard({ project, idx }: { project: any; idx: number }) {
+function ProjectListCard({ project, idx, setClickedProject }: { project: any; idx: number; setClickedProject: any }) {
+  const [hovered, setHovered] = useState(false);
   const img = PROJECT_IMAGES[idx % PROJECT_IMAGES.length];
   const typeColor = TYPE_COLORS[project.project_type] || '#6B7280';
   const statusColor = STATUS_COLORS[project.status] || '#6B7280';
 
   return (
-    <div style={{ display: 'flex', background: '#fff', borderRadius: '12px', border: '1px solid #e5e7eb', overflow: 'hidden', cursor: 'pointer' }}>
+    <div
+      onClick={() => setClickedProject(project)}
+      onMouseEnter={() => setHovered(true)}
+      onMouseLeave={() => setHovered(false)}
+      style={{
+        display: 'flex',
+        background: '#fff',
+        borderRadius: '12px',
+        border: '1px solid #e5e7eb',
+        overflow: 'hidden',
+        cursor: 'pointer',
+        transition: 'all 0.2s ease',
+        transform: hovered ? 'translateY(-2px)' : 'none',
+        boxShadow: hovered ? '0 6px 20px rgba(0,0,0,0.1)' : '0 1px 3px rgba(0,0,0,0.06)'
+      }}
+    >
       <img src={img} alt={project.name} style={{ width: '130px', objectFit: 'cover', flexShrink: 0 }} />
       <div style={{ padding: '14px 16px', flex: 1 }}>
         <div style={{ display: 'flex', justifyContent: 'space-between', marginBottom: '4px' }}>

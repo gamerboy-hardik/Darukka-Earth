@@ -1,6 +1,7 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import Map, { NavigationControl, Marker, Popup, Source, Layer, type ViewStateChangeEvent } from 'react-map-gl/mapbox';
 import { motion, AnimatePresence } from 'framer-motion';
+import { LineChart, Line, XAxis, YAxis, CartesianGrid, Tooltip as RechartsTooltip, ResponsiveContainer } from 'recharts';
 import 'mapbox-gl/dist/mapbox-gl.css';
 
 const MAPBOX_TOKEN = import.meta.env.VITE_MAPBOX_TOKEN || '';
@@ -199,7 +200,7 @@ export default function MapWrapper({ projects = [] }: MapWrapperProps) {
         )}
       </Map>
 
-      {/* Click Modal (Deep Details) */}
+        {/* Click Modal (Deep Details) */}
       <AnimatePresence>
         {clickedProject && (
           <motion.div
@@ -217,10 +218,11 @@ export default function MapWrapper({ projects = [] }: MapWrapperProps) {
               boxShadow: '0 20px 40px rgba(0,0,0,0.2)',
               zIndex: 20,
               display: 'flex',
-              gap: '20px'
+              gap: '30px',
+              maxHeight: '300px'
             }}
           >
-            <div style={{ flex: 1 }}>
+            <div style={{ flex: 1, overflowY: 'auto' }}>
               <h3 style={{ margin: '0 0 8px 0', fontSize: '20px', fontWeight: 800 }}>{clickedProject.name}</h3>
               <div style={{ display: 'flex', gap: '8px', marginBottom: '16px' }}>
                 <span style={{ fontSize: '11px', fontWeight: 700, padding: '4px 10px', background: '#1CAAD915', color: '#1CAAD9', borderRadius: '20px' }}>
@@ -234,16 +236,40 @@ export default function MapWrapper({ projects = [] }: MapWrapperProps) {
                 {clickedProject.description}
               </p>
             </div>
-            <div style={{ display: 'flex', flexDirection: 'column', gap: '12px' }}>
+            
+            {/* Chart Area */}
+            <div style={{ flex: 1.5, minWidth: '300px', display: 'flex', flexDirection: 'column' }}>
+              <div style={{ fontSize: '13px', fontWeight: 700, color: '#374151', marginBottom: '8px' }}>Performance Over Time (CO2 Mitigated)</div>
+              <div style={{ flex: 1, minHeight: '150px' }}>
+                <ResponsiveContainer width="100%" height="100%">
+                  <LineChart data={[
+                    { name: 'Jan', co2: 1200 },
+                    { name: 'Feb', co2: 1900 },
+                    { name: 'Mar', co2: 2400 },
+                    { name: 'Apr', co2: 3200 },
+                    { name: 'May', co2: 4100 },
+                    { name: 'Jun', co2: 5000 },
+                  ]}>
+                    <CartesianGrid strokeDasharray="3 3" vertical={false} stroke="#e5e7eb" />
+                    <XAxis dataKey="name" axisLine={false} tickLine={false} tick={{ fontSize: 11, fill: '#6B7280' }} dy={10} />
+                    <YAxis axisLine={false} tickLine={false} tick={{ fontSize: 11, fill: '#6B7280' }} dx={-10} />
+                    <RechartsTooltip contentStyle={{ borderRadius: '8px', border: 'none', boxShadow: '0 4px 6px rgba(0,0,0,0.1)' }} />
+                    <Line type="monotone" dataKey="co2" stroke="#1CAAD9" strokeWidth={3} dot={{ r: 4, strokeWidth: 2 }} activeDot={{ r: 6 }} />
+                  </LineChart>
+                </ResponsiveContainer>
+              </div>
+            </div>
+
+            <div style={{ display: 'flex', flexDirection: 'column', gap: '12px', justifyContent: 'center' }}>
               <button 
                 onClick={() => setClickedProject(null)}
-                style={{ padding: '8px 16px', border: '1px solid #e5e7eb', background: '#fff', borderRadius: '8px', cursor: 'pointer', fontWeight: 600, color: '#374151' }}
+                style={{ padding: '8px 16px', border: '1px solid #e5e7eb', background: '#fff', borderRadius: '8px', cursor: 'pointer', fontWeight: 600, color: '#374151', whiteSpace: 'nowrap' }}
               >
                 Close
               </button>
               <button 
                 onClick={() => window.location.href = '/analytics'}
-                style={{ padding: '8px 16px', border: 'none', background: '#111827', borderRadius: '8px', cursor: 'pointer', fontWeight: 600, color: '#fff' }}
+                style={{ padding: '8px 16px', border: 'none', background: '#111827', borderRadius: '8px', cursor: 'pointer', fontWeight: 600, color: '#fff', whiteSpace: 'nowrap' }}
               >
                 Full Analytics
               </button>
