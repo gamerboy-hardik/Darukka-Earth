@@ -120,37 +120,44 @@ export default function Landing() {
         </nav>
 
         {/* HERO */}
-        <section style={{position:'relative',minHeight:'100vh',display:'flex',alignItems:'center',padding:'120px 40px 80px',overflow:'hidden'}}>
-          <div className="grid-bg" />
-          <div className="hg" style={{width:600,height:600,background:'rgba(28,170,217,.1)',top:'-100px',left:'-100px',animationDelay:'0s'}}/>
-          <div className="hg" style={{width:500,height:500,background:'rgba(16,185,129,.08)',bottom:'-50px',right:'-80px',animationDelay:'4s'}}/>
+        <section style={{position:'relative',minHeight:'100vh',display:'flex',alignItems:'center',justifyContent:'center',padding:'120px 40px 80px',overflow:'hidden',textAlign:'center'}}>
+          <div className="grid-bg" style={{ zIndex: 0 }} />
+          <div className="hg" style={{width:600,height:600,background:'rgba(28,170,217,.1)',top:'-100px',left:'-100px',animationDelay:'0s', zIndex: 0}}/>
+          <div className="hg" style={{width:500,height:500,background:'rgba(16,185,129,.08)',bottom:'-50px',right:'-80px',animationDelay:'4s', zIndex: 0}}/>
           
-          <div style={{position:'relative',zIndex:2,maxWidth:1200,margin:'0 auto',display:'flex',alignItems:'center',flexWrap:'wrap',gap:'40px',width:'100%'}}>
-            <div style={{flex:'1 1 500px',textAlign:'left'}}>
-              <div className="fu" style={{marginBottom:20}}>
-                <span className="bc">🌍 Real-time Geospatial Intelligence</span>
-              </div>
-              <h1 className="fu d1" style={{fontFamily:"'Outfit',sans-serif",fontWeight:900,fontSize:'clamp(42px,5.5vw,72px)',lineHeight:1.1,letterSpacing:'-1.5px',marginBottom:24}}>
-                <span style={{color:'#111827'}}>Empowering</span><br/>
-                <span style={{background:'linear-gradient(90deg,#1CAAD9,#10B981,#1CAAD9)',backgroundSize:'200%',WebkitBackgroundClip:'text',WebkitTextFillColor:'transparent',animation:'shimmer 4s linear infinite'}}>
-                  Environmental Action
-                </span>
-              </h1>
-              <p className="fu d2" style={{fontSize:18,color:'#4B5563',lineHeight:1.7,marginBottom:40,maxWidth:540}}>
-                A premium geospatial platform for tracking ecological projects, monitoring environmental metrics, and fostering global sustainability through advanced data visualization.
-              </p>
-              <div className="fu d3" style={{display:'flex',gap:14,flexWrap:'wrap'}}>
-                <Link to="/register" className="lnb lnb-s" style={{fontSize:17,padding:'14px 34px'}}>Join the Movement →</Link>
-                <Link to="/login" className="lnb lnb-g" style={{fontSize:17,padding:'14px 34px'}}>View Dashboard</Link>
-              </div>
-              <div className="fu d4" style={{marginTop:36,display:'flex',gap:14,flexWrap:'wrap'}}>
-                <span className="pv">✓ REDD+ Compliant</span>
-                <span className="pv">✓ VCS Standards</span>
-                <span className="pv">✓ ISO 14064</span>
-              </div>
+          {/* 3D Background */}
+          <div style={{ position: 'absolute', top: 0, left: 0, width: '100%', height: '100%', zIndex: 1, pointerEvents: 'none', overflow: 'hidden' }}>
+            <iframe 
+              title="Earth Model" 
+              src="https://sketchfab.com/models/f996c2489cfc435eb79399ad1890f8e0/embed?autostart=1&transparent=1&ui_infos=0&ui_stop=0&ui_watermark=0&ui_theme=light&dnt=1" 
+              frameBorder="0" 
+              style={{ width: '110vw', height: '120vh', border: 'none', marginLeft: '-5vw', marginTop: '-10vh' }}
+              allow="autoplay; fullscreen; vr" 
+              allowFullScreen
+            ></iframe>
+          </div>
+
+          <div style={{position:'relative',zIndex:2,maxWidth:820, background: 'rgba(255,255,255,0.6)', backdropFilter: 'blur(8px)', WebkitBackdropFilter: 'blur(8px)', padding: '40px', borderRadius: '30px', boxShadow: '0 20px 50px rgba(0,0,0,0.05)', border: '1px solid rgba(255,255,255,0.8)'}}>
+            <div className="fu" style={{marginBottom:20}}>
+              <span className="bc">🌍 Real-time Geospatial Intelligence</span>
             </div>
-            <div className="fu d3" style={{flex:'1 1 500px',height:'500px',borderRadius:'24px',overflow:'hidden',boxShadow:'0 20px 50px rgba(0,0,0,0.1)',border:'1px solid #E5E7EB',background:'#fff'}}>
-              <iframe title="Earth Model" width="100%" height="100%" src="https://sketchfab.com/models/f996c2489cfc435eb79399ad1890f8e0/embed?autostart=1&transparent=1&ui_infos=0&ui_stop=0&ui_watermark=0&ui_theme=light" frameBorder="0" allow="autoplay; fullscreen; vr" allowFullScreen></iframe>
+            <h1 className="fu d1" style={{fontFamily:"'Outfit',sans-serif",fontWeight:900,fontSize:'clamp(42px,7vw,80px)',lineHeight:1.05,letterSpacing:'-2px',marginBottom:28}}>
+              <span style={{color:'#111827'}}>Empowering</span><br/>
+              <span style={{background:'linear-gradient(90deg,#1CAAD9,#10B981,#1CAAD9)',backgroundSize:'200%',WebkitBackgroundClip:'text',WebkitTextFillColor:'transparent',animation:'shimmer 4s linear infinite'}}>
+                Environmental Action
+              </span>
+            </h1>
+            <p className="fu d2" style={{fontSize:19,color:'#4B5563',lineHeight:1.7,marginBottom:44,maxWidth:640,marginLeft:'auto',marginRight:'auto', fontWeight: 500}}>
+              A premium geospatial platform for tracking ecological projects, monitoring environmental metrics, and fostering global sustainability through advanced data visualization.
+            </p>
+            <div className="fu d3" style={{display:'flex',gap:14,justifyContent:'center',flexWrap:'wrap'}}>
+              <Link to="/register" className="lnb lnb-s" style={{fontSize:17,padding:'14px 34px'}}>Join the Movement →</Link>
+              <Link to="/login" className="lnb lnb-g" style={{fontSize:17,padding:'14px 34px'}}>View Dashboard</Link>
+            </div>
+            <div className="fu d4" style={{marginTop:36,display:'flex',gap:14,justifyContent:'center',flexWrap:'wrap'}}>
+              <span className="pv">✓ REDD+ Compliant</span>
+              <span className="pv">✓ VCS Standards</span>
+              <span className="pv">✓ ISO 14064</span>
             </div>
           </div>
         </section>
