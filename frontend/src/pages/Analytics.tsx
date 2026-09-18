@@ -77,7 +77,7 @@ export default function Analytics() {
   return (
     <div className="ts-page-wrapper ts-has-bokeh-bg" style={{ minHeight: '100vh', backgroundColor: '#f8f9fa' }}>
       {/* Header */}
-      <header id="ts-header" className="navbar-light bg-white border-bottom shadow-sm z-10" style={{ zIndex: 1000 }}>
+      <header id="ts-header" className="navbar-light bg-white border-bottom shadow-sm z-10 d-print-none" style={{ zIndex: 1000 }}>
         <nav id="ts-primary-navigation" className="navbar navbar-expand-md">
           <div className="container-fluid px-4">
             <a className="navbar-brand text-dark" href="/">
@@ -102,9 +102,9 @@ export default function Analytics() {
       </header>
 
       <main className="container mt-4 pt-4 position-relative" style={{ zIndex: 10 }}>
-        <div className="d-flex justify-content-between align-items-center mb-4">
+        <div className="d-flex justify-content-between align-items-center mb-4 d-print-none">
           <h2 className="text-dark font-weight-bold"><i className="fa fa-chart-line mr-2" style={{ color: 'var(--primary)' }}></i> Ecosystem Analytics</h2>
-          <button onClick={() => alert("PDF report generation coming soon!")} className="btn btn-premium"><i className="fa fa-download mr-2"></i> Export Report</button>
+          <button onClick={() => window.print()} className="btn btn-premium"><i className="fa fa-download mr-2"></i> Export PDF Report</button>
         </div>
 
         {loading ? (
@@ -219,7 +219,7 @@ export default function Analytics() {
                 <div className="card premium-card h-100 border-0 shadow-sm">
                   <div className="card-body d-flex flex-column">
                     <h5 className="card-title mb-4 font-weight-bold text-dark">Ecosystem Composition</h5>
-                    <div style={{ flex: 1, position: 'relative', minHeight: '300px' }}>
+                    <div style={{ height: '350px', position: 'relative' }}>
                       <Doughnut
                         data={{
                           labels: ['Mangroves', 'Tropical Shrubs', 'Native Grasses', 'Canopy Trees'],
@@ -297,7 +297,7 @@ export default function Analytics() {
                 <div className="card premium-card h-100 border-0 shadow-sm">
                   <div className="card-body d-flex flex-column">
                     <h5 className="card-title mb-4 font-weight-bold text-dark">Site Environment Preview</h5>
-                    <div className="sketchfab-embed-wrapper flex-grow-1" style={{ minHeight: '300px', borderRadius: '12px', overflow: 'hidden', backgroundColor: '#e5e7eb' }}>
+                    <div className="sketchfab-embed-wrapper" style={{ height: '300px', borderRadius: '12px', overflow: 'hidden', backgroundColor: '#e5e7eb' }}>
                       <iframe 
                         title="Stylized Mangrove Greenhouse" 
                         frameBorder="0" 
