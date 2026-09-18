@@ -21,7 +21,6 @@ export default function Analytics() {
   const [loading, setLoading] = useState(true);
   
   const [isEditModalOpen, setIsEditModalOpen] = useState(false);
-  const [editStats, setEditStats] = useState({ carbon: 0, bio: 0, survival: 0 });
 
   // Ref for custom gradients
   const chartRef = useRef<any>(null);

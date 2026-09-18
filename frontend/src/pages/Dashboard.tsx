@@ -1,6 +1,6 @@
 import React, { useEffect, useState } from 'react';
 import { useAuth } from '../contexts/AuthContext';
-import { useNavigate, Link } from 'react-router-dom';
+import { useNavigate } from 'react-router-dom';
 import MapWrapper from '../components/MapWrapper';
 import { fetchWithAuth } from '../lib/api';
 import Map from 'react-map-gl/mapbox';
@@ -39,7 +39,7 @@ const INDIA_REGIONS: Record<string, string> = {
 };
 
 export default function Dashboard() {
-  const { user, logout } = useAuth();
+  const { logout } = useAuth();
   const navigate = useNavigate();
   const [projects, setProjects] = useState<any[]>([]);
   const [loading, setLoading] = useState(true);
