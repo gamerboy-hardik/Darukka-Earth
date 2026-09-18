@@ -3,6 +3,11 @@ import { useAuth } from '../contexts/AuthContext';
 import { useNavigate, Link } from 'react-router-dom';
 import MapWrapper from '../components/MapWrapper';
 import { fetchWithAuth } from '../lib/api';
+import Map from 'react-map-gl/mapbox';
+import DrawControl from '../components/DrawControl';
+import '@mapbox/mapbox-gl-draw/dist/mapbox-gl-draw.css';
+
+const MAPBOX_TOKEN = import.meta.env.VITE_MAPBOX_TOKEN || '';
 
 const PROJECT_IMAGES = [
   'https://images.unsplash.com/photo-1542601906990-b4d3fb778b09?auto=format&fit=crop&w=600&q=80',
@@ -52,8 +57,23 @@ export default function Dashboard() {
     description: '',
     project_type: 'carbon',
     latitude: '',
-    longitude: ''
+    longitude: '',
+    boundary_geojson: ''
   });
+
+  const onDrawUpdate = React.useCallback((e: { features: any[] }) => {
+    if (e.features && e.features.length > 0) {
+      setNewProject(prev => ({
+        ...prev,
+        boundary_geojson: JSON.stringify({
+          type: "FeatureCollection",
+          features: e.features
+        })
+      }));
+    } else {
+      setNewProject(prev => ({ ...prev, boundary_geojson: '' }));
+    }
+  }, []);
 
   const handleLogout = () => {
     logout();
@@ -71,6 +91,7 @@ export default function Dashboard() {
         status: "active",
         latitude: newProject.latitude ? parseFloat(newProject.latitude) : null,
         longitude: newProject.longitude ? parseFloat(newProject.longitude) : null,
+        boundary_geojson: newProject.boundary_geojson || null,
       };
       
       const res = await fetchWithAuth('/api/projects/', {
@@ -81,7 +102,7 @@ export default function Dashboard() {
       
       setProjects([data, ...projects]);
       setIsModalOpen(false);
-      setNewProject({ name: '', description: '', project_type: 'carbon', latitude: '', longitude: '' });
+      setNewProject({ name: '', description: '', project_type: 'carbon', latitude: '', longitude: '', boundary_geojson: '' });
     } catch (error) {
       alert("Failed to add project. Please try again.");
     } finally {
@@ -320,14 +341,37 @@ export default function Dashboard() {
                   </select>
                 </div>
               </div>
-              <div style={{ display: 'flex', gap: '16px' }}>
-                <div style={{ flex: 1 }}>
-                  <label style={{ display: 'block', fontSize: '13px', fontWeight: 600, color: '#374151', marginBottom: '6px' }}>Latitude</label>
-                  <input type="number" step="any" value={newProject.latitude} onChange={e => setNewProject({...newProject, latitude: e.target.value})} style={{ width: '100%', padding: '10px 14px', border: '1px solid #d1d5db', borderRadius: '8px', fontSize: '14px' }} placeholder="e.g. 21.9497" />
+              <div style={{ display: 'flex', flexDirection: 'column', gap: '6px' }}>
+                <label style={{ display: 'block', fontSize: '13px', fontWeight: 600, color: '#374151' }}>
+                  Project Area (Optional: Draw on map or enter coordinates)
+                </label>
+                <div style={{ display: 'flex', gap: '16px', marginBottom: '8px' }}>
+                  <div style={{ flex: 1 }}>
+                    <input type="number" step="any" value={newProject.latitude} onChange={e => setNewProject({...newProject, latitude: e.target.value})} style={{ width: '100%', padding: '8px 12px', border: '1px solid #d1d5db', borderRadius: '8px', fontSize: '13px' }} placeholder="Latitude (e.g. 21.9497)" />
+                  </div>
+                  <div style={{ flex: 1 }}>
+                    <input type="number" step="any" value={newProject.longitude} onChange={e => setNewProject({...newProject, longitude: e.target.value})} style={{ width: '100%', padding: '8px 12px', border: '1px solid #d1d5db', borderRadius: '8px', fontSize: '13px' }} placeholder="Longitude (e.g. 89.1833)" />
+                  </div>
                 </div>
-                <div style={{ flex: 1 }}>
-                  <label style={{ display: 'block', fontSize: '13px', fontWeight: 600, color: '#374151', marginBottom: '6px' }}>Longitude</label>
-                  <input type="number" step="any" value={newProject.longitude} onChange={e => setNewProject({...newProject, longitude: e.target.value})} style={{ width: '100%', padding: '10px 14px', border: '1px solid #d1d5db', borderRadius: '8px', fontSize: '14px' }} placeholder="e.g. 89.1833" />
+                <div style={{ height: '220px', width: '100%', borderRadius: '8px', overflow: 'hidden', border: '1px solid #d1d5db', position: 'relative' }}>
+                  {MAPBOX_TOKEN ? (
+                    <Map
+                      initialViewState={{ longitude: 78.9629, latitude: 20.5937, zoom: 3 }}
+                      mapStyle="mapbox://styles/mapbox/satellite-v9"
+                      mapboxAccessToken={MAPBOX_TOKEN}
+                    >
+                      <DrawControl
+                        position="top-left"
+                        displayControlsDefault={false}
+                        controls={{ polygon: true, trash: true }}
+                        onCreate={onDrawUpdate}
+                        onUpdate={onDrawUpdate}
+                        onDelete={onDrawUpdate}
+                      />
+                    </Map>
+                  ) : (
+                    <div style={{ padding: '20px', textAlign: 'center', background: '#f3f4f6', height: '100%' }}>Mapbox token required</div>
+                  )}
                 </div>
               </div>
               

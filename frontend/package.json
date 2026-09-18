@@ -11,6 +11,8 @@
     "prepare": "husky"
   },
   "dependencies": {
+    "@mapbox/mapbox-gl-draw": "^1.5.2",
+    "@types/mapbox__mapbox-gl-draw": "^1.4.9",
     "@types/mapbox-gl": "^3.4.1",
     "framer-motion": "^13.4.0",
     "mapbox-gl": "^3.31.0",

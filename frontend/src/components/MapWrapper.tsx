@@ -1,6 +1,6 @@
 import React, { useState } from 'react';
-import Map, { NavigationControl, Marker, type ViewStateChangeEvent } from 'react-map-gl/mapbox';
-import { motion } from 'framer-motion';
+import Map, { NavigationControl, Marker, Popup, Source, Layer, type ViewStateChangeEvent } from 'react-map-gl/mapbox';
+import { motion, AnimatePresence } from 'framer-motion';
 import 'mapbox-gl/dist/mapbox-gl.css';
 
 const MAPBOX_TOKEN = import.meta.env.VITE_MAPBOX_TOKEN || '';
@@ -33,6 +33,8 @@ export default function MapWrapper({ projects = [] }: MapWrapperProps) {
   });
   
   const [mapStyle, setMapStyle] = useState(MAP_STYLES[3].url); // Streets - matches reference
+  const [hoveredProject, setHoveredProject] = useState<any | null>(null);
+  const [clickedProject, setClickedProject] = useState<any | null>(null);
 
   if (!MAPBOX_TOKEN) {
     return (
@@ -102,10 +104,17 @@ export default function MapWrapper({ projects = [] }: MapWrapperProps) {
                   damping: 20,
                   delay: idx * 0.1 
                 }}
-                whileHover={{ scale: 1.2 }}
-                whileTap={{ scale: 0.9 }}
-                onClick={() => {
-                  // Pan to marker on click
+                onMouseEnter={(e) => {
+                  e.currentTarget.style.transform = 'scale(1.2)';
+                  setHoveredProject(project);
+                }}
+                onMouseLeave={(e) => {
+                  e.currentTarget.style.transform = 'scale(1)';
+                  setHoveredProject(null);
+                }}
+                onClick={(e) => {
+                  e.stopPropagation();
+                  setClickedProject(project);
                   setViewState({
                     ...viewState,
                     longitude: coords.lng,
@@ -145,7 +154,103 @@ export default function MapWrapper({ projects = [] }: MapWrapperProps) {
             </Marker>
           );
         })}
+
+        {/* Polygons */}
+        {projects.map((project, idx) => {
+          if (!project.boundary_geojson) return null;
+          let geojson = null;
+          try {
+            geojson = JSON.parse(project.boundary_geojson);
+          } catch (e) {
+            return null;
+          }
+          return (
+            <Source key={`source-${project.id}`} id={`source-${project.id}`} type="geojson" data={geojson}>
+              <Layer
+                id={`layer-${project.id}`}
+                type="fill"
+                paint={{
+                  'fill-color': '#1CAAD9',
+                  'fill-opacity': 0.4,
+                  'fill-outline-color': '#111827'
+                }}
+              />
+            </Source>
+          );
+        })}
+
+        {/* Hover Popup */}
+        {hoveredProject && (
+          <Popup
+            longitude={(PROJECT_COORDINATES[hoveredProject.name] && PROJECT_COORDINATES[hoveredProject.name].lng) || hoveredProject.longitude}
+            latitude={(PROJECT_COORDINATES[hoveredProject.name] && PROJECT_COORDINATES[hoveredProject.name].lat) || hoveredProject.latitude}
+            closeButton={false}
+            closeOnClick={false}
+            anchor="bottom"
+            offset={30}
+          >
+            <div style={{ padding: '8px', maxWidth: '200px' }}>
+              <h4 style={{ margin: '0 0 4px 0', fontSize: '14px', fontWeight: 700 }}>{hoveredProject.name}</h4>
+              <p style={{ margin: 0, fontSize: '12px', color: '#6B7280', overflow: 'hidden', display: '-webkit-box', WebkitLineClamp: 2, WebkitBoxOrient: 'vertical' as any }}>
+                {hoveredProject.description}
+              </p>
+            </div>
+          </Popup>
+        )}
       </Map>
+
+      {/* Click Modal (Deep Details) */}
+      <AnimatePresence>
+        {clickedProject && (
+          <motion.div
+            initial={{ opacity: 0, y: 20 }}
+            animate={{ opacity: 1, y: 0 }}
+            exit={{ opacity: 0, y: 20 }}
+            style={{
+              position: 'absolute',
+              bottom: '24px',
+              left: '24px',
+              right: '24px',
+              background: '#fff',
+              borderRadius: '16px',
+              padding: '24px',
+              boxShadow: '0 20px 40px rgba(0,0,0,0.2)',
+              zIndex: 20,
+              display: 'flex',
+              gap: '20px'
+            }}
+          >
+            <div style={{ flex: 1 }}>
+              <h3 style={{ margin: '0 0 8px 0', fontSize: '20px', fontWeight: 800 }}>{clickedProject.name}</h3>
+              <div style={{ display: 'flex', gap: '8px', marginBottom: '16px' }}>
+                <span style={{ fontSize: '11px', fontWeight: 700, padding: '4px 10px', background: '#1CAAD915', color: '#1CAAD9', borderRadius: '20px' }}>
+                  {clickedProject.project_type.toUpperCase()}
+                </span>
+                <span style={{ fontSize: '11px', fontWeight: 700, padding: '4px 10px', background: '#f3f4f6', color: '#374151', borderRadius: '20px' }}>
+                  {clickedProject.status.toUpperCase()}
+                </span>
+              </div>
+              <p style={{ margin: 0, fontSize: '14px', color: '#4B5563', lineHeight: 1.6 }}>
+                {clickedProject.description}
+              </p>
+            </div>
+            <div style={{ display: 'flex', flexDirection: 'column', gap: '12px' }}>
+              <button 
+                onClick={() => setClickedProject(null)}
+                style={{ padding: '8px 16px', border: '1px solid #e5e7eb', background: '#fff', borderRadius: '8px', cursor: 'pointer', fontWeight: 600, color: '#374151' }}
+              >
+                Close
+              </button>
+              <button 
+                onClick={() => window.location.href = '/analytics'}
+                style={{ padding: '8px 16px', border: 'none', background: '#111827', borderRadius: '8px', cursor: 'pointer', fontWeight: 600, color: '#fff' }}
+              >
+                Full Analytics
+              </button>
+            </div>
+          </motion.div>
+        )}
+      </AnimatePresence>
     </div>
   );
 }
