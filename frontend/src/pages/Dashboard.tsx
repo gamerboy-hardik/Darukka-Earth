@@ -68,6 +68,34 @@ export default function Dashboard() {
   });
   const [searchLocation, setSearchLocation] = useState('');
   const [isSearchingLocation, setIsSearchingLocation] = useState(false);
+  const [recommendedLocation, setRecommendedLocation] = useState<{name: string, lng: number, lat: number} | null>(null);
+
+  // Debounced effect to fetch recommended location based on Project Name
+  useEffect(() => {
+    const timer = setTimeout(async () => {
+      if (newProject.name.length > 3) {
+        try {
+          const res = await fetch(`https://api.mapbox.com/geocoding/v5/mapbox.places/${encodeURIComponent(newProject.name)}.json?access_token=${MAPBOX_TOKEN}&types=place,region,country,poi`);
+          const data = await res.json();
+          if (data.features && data.features.length > 0) {
+            const bestMatch = data.features[0];
+            setRecommendedLocation({
+              name: bestMatch.place_name,
+              lng: bestMatch.center[0],
+              lat: bestMatch.center[1]
+            });
+          } else {
+            setRecommendedLocation(null);
+          }
+        } catch (e) {
+          setRecommendedLocation(null);
+        }
+      } else {
+        setRecommendedLocation(null);
+      }
+    }, 800);
+    return () => clearTimeout(timer);
+  }, [newProject.name]);
 
   const onDrawUpdate = React.useCallback((e: { features: any[] }) => {
     if (e.features && e.features.length > 0) {
@@ -357,6 +385,23 @@ export default function Dashboard() {
               <div>
                 <label style={{ display: 'block', fontSize: '13px', fontWeight: 600, color: '#374151', marginBottom: '6px' }}>Project Name</label>
                 <input required type="text" value={newProject.name} onChange={e => setNewProject({...newProject, name: e.target.value})} style={{ width: '100%', padding: '10px 14px', border: '1px solid #d1d5db', borderRadius: '8px', fontSize: '14px' }} placeholder="e.g. Sundarbans Restoration" />
+                {recommendedLocation && (
+                  <div style={{ marginTop: '6px' }}>
+                    <button 
+                      type="button" 
+                      onClick={() => {
+                        setModalViewState({
+                          longitude: recommendedLocation.lng,
+                          latitude: recommendedLocation.lat,
+                          zoom: 12
+                        });
+                      }}
+                      style={{ background: '#EFF9FD', border: '1px solid #1CAAD9', color: '#1CAAD9', padding: '4px 10px', borderRadius: '20px', fontSize: '12px', fontWeight: 600, cursor: 'pointer', display: 'flex', alignItems: 'center', gap: '4px' }}
+                    >
+                      <i className="fa fa-map-marker" /> Auto-detect: {recommendedLocation.name} (Click to zoom)
+                    </button>
+                  </div>
+                )}
               </div>
               <div>
                 <label style={{ display: 'block', fontSize: '13px', fontWeight: 600, color: '#374151', marginBottom: '6px' }}>Description</label>
