@@ -150,7 +150,7 @@ export default function Landing() {
               </div>
             </div>
             <div className="fu d3" style={{flex:'1 1 500px',height:'500px',borderRadius:'24px',overflow:'hidden',boxShadow:'0 20px 50px rgba(0,0,0,0.1)',border:'1px solid #E5E7EB',background:'#fff'}}>
-              <iframe title="Mangrove Forest" width="100%" height="100%" src="https://sketchfab.com/models/2c4c3b52d91448b49e0618ff975ab17c/embed?autostart=1&ui_theme=light&dnt=1" frameBorder="0" allow="autoplay; fullscreen; vr" allowFullScreen></iframe>
+              <iframe title="Earth Model" width="100%" height="100%" src="https://sketchfab.com/models/f996c2489cfc435eb79399ad1890f8e0/embed?autostart=1&transparent=1&ui_infos=0&ui_stop=0&ui_watermark=0&ui_theme=light" frameBorder="0" allow="autoplay; fullscreen; vr" allowFullScreen></iframe>
             </div>
           </div>
         </section>
