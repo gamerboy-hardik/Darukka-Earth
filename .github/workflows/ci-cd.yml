@@ -57,7 +57,9 @@ jobs:
 
       - name: Run Backend Tests
         working-directory: ./backend
-        run: pytest
+        run: |
+          alembic upgrade head
+          pytest
 
   deploy:
     needs: test-and-lint
