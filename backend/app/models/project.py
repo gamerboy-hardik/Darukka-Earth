@@ -15,6 +15,7 @@ class Project(Base):
     owner_id = Column(Integer, ForeignKey("user.id"), nullable=False)
     latitude = Column(Float, nullable=True)
     longitude = Column(Float, nullable=True)
+    boundary_geojson = Column(String, nullable=True)
     created_at = Column(DateTime, default=datetime.utcnow)
     updated_at = Column(DateTime, default=datetime.utcnow, onupdate=datetime.utcnow)
 

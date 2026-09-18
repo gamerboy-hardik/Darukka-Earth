@@ -9,6 +9,7 @@ class ProjectBase(BaseModel):
     status: Optional[str] = "draft"
     latitude: Optional[float] = None
     longitude: Optional[float] = None
+    boundary_geojson: Optional[str] = None
 
 class ProjectCreate(ProjectBase):
     pass
