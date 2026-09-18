@@ -1,6 +1,6 @@
 import React, { useEffect, useState, useRef } from 'react';
 import { useAuth } from '../contexts/AuthContext';
-import { useNavigate, Link } from 'react-router-dom';
+import { useNavigate, Link, useSearchParams } from 'react-router-dom';
 import { 
   Chart as ChartJS, 
   registerables 
@@ -13,6 +13,9 @@ ChartJS.register(...registerables);
 export default function Analytics() {
   const { user, logout } = useAuth();
   const navigate = useNavigate();
+  const [searchParams] = useSearchParams();
+  const projectId = searchParams.get('projectId');
+  const [project, setProject] = useState<any>(null);
   const [metrics, setMetrics] = useState<any[]>([]);
   const [loading, setLoading] = useState(true);
   
@@ -25,27 +28,43 @@ export default function Analytics() {
   };
 
   useEffect(() => {
-    // Generate realistic 24-month dataset
-    const generateMockData = () => {
+    const loadData = async () => {
+      let pData = { id: 0, name: 'Global Ecosystem', project_type: 'mixed', latitude: 0, longitude: 0, description: '' };
+      if (projectId) {
+        try {
+          const res = await fetchWithAuth(`/api/projects/${projectId}`);
+          pData = await res.json();
+        } catch (e) {
+          console.error("Failed to fetch project", e);
+        }
+      }
+      setProject(pData);
+
+      // Generate realistic 24-month dataset deterministically based on project type
+      const isCarbon = pData.project_type === 'carbon';
+      const isBio = pData.project_type === 'biodiversity';
+      
       const data = [];
-      let currentCarbon = 2000;
-      let currentBio = 2.1;
+      let currentCarbon = isCarbon ? 5000 : 2000;
+      let currentBio = isBio ? 4.2 : 3.1;
       let currentSurvival = 85;
       
       const months = ['Jan', 'Feb', 'Mar', 'Apr', 'May', 'Jun', 'Jul', 'Aug', 'Sep', 'Oct', 'Nov', 'Dec'];
       
+      // Deterministic pseudo-random seed based on project ID or name length
+      const seed = pData.id || pData.name.length;
+      const pseudoRandom = (i: number) => Math.abs(Math.sin(seed * i)) * 100;
+      
       for (let year = 2024; year <= 2025; year++) {
         for (let m = 0; m < 12; m++) {
-          // Carbon grows exponentially
-          currentCarbon += Math.floor(Math.random() * 500) + (m * 50);
+          const step = (year - 2024) * 12 + m;
+          currentCarbon += Math.floor(pseudoRandom(step) * 5) + (m * 50);
           
-          // Bio grows slowly and plateaus
-          currentBio += (Math.random() * 0.1);
-          if (currentBio > 4.8) currentBio = 4.8;
+          currentBio += (pseudoRandom(step) * 0.002);
+          if (currentBio > 4.9) currentBio = 4.9;
           
-          // Survival fluctuates based on season (summer/monsoon)
           const seasonMod = (m > 3 && m < 7) ? -2 : 1;
-          currentSurvival += seasonMod + (Math.random() * 2 - 1);
+          currentSurvival += seasonMod + (pseudoRandom(step) * 0.04 - 2);
           if (currentSurvival > 98) currentSurvival = 98;
           if (currentSurvival < 75) currentSurvival = 75;
 
@@ -57,14 +76,13 @@ export default function Analytics() {
           });
         }
       }
-      return data;
+      
+      setMetrics(data);
+      setLoading(false);
     };
 
-    setTimeout(() => {
-      setMetrics(generateMockData());
-      setLoading(false);
-    }, 600); // Simulate network latency
-  }, []);
+    loadData();
+  }, [projectId]);
 
   const getGradient = (ctx: CanvasRenderingContext2D, chartArea: any) => {
     if (!chartArea) return 'transparent';
@@ -103,7 +121,14 @@ export default function Analytics() {
 
       <main className="container mt-4 pt-4 position-relative" style={{ zIndex: 10 }}>
         <div className="d-flex justify-content-between align-items-center mb-4 d-print-none">
-          <h2 className="text-dark font-weight-bold"><i className="fa fa-chart-line mr-2" style={{ color: 'var(--primary)' }}></i> Ecosystem Analytics</h2>
+          <div>
+            <h2 className="text-dark font-weight-bold mb-1"><i className="fa fa-chart-line mr-2" style={{ color: 'var(--primary)' }}></i> {project?.name || 'Ecosystem'} Analytics</h2>
+            {project?.project_type && (
+              <span className="badge badge-primary px-3 py-2 text-uppercase" style={{ fontSize: '12px', background: 'var(--primary)' }}>
+                {project.project_type} Project
+              </span>
+            )}
+          </div>
           <button onClick={() => window.print()} className="btn btn-premium"><i className="fa fa-download mr-2"></i> Export PDF Report</button>
         </div>
 
@@ -141,7 +166,7 @@ export default function Analytics() {
                 <div className="card premium-card h-100 border-0" style={{ boxShadow: '0 4px 20px rgba(253,126,20,0.1)' }}>
                   <div className="card-body text-center">
                     <h6 className="text-muted mb-2 font-weight-bold text-uppercase" style={{ fontSize: '11px', letterSpacing: '1px' }}>Area Restored</h6>
-                    <h2 className="mb-0 font-weight-bold" style={{ color: '#fd7e14' }}>12,450 <small className="text-muted" style={{fontSize: '14px'}}>Ha</small></h2>
+                    <h2 className="mb-0 font-weight-bold" style={{ color: '#fd7e14' }}>{project ? Math.floor(Math.abs(Math.sin((project.id || project.name.length) * 5)) * 15000 + 1000).toLocaleString() : '12,450'} <small className="text-muted" style={{fontSize: '14px'}}>Ha</small></h2>
                   </div>
                 </div>
               </div>
@@ -224,7 +249,7 @@ export default function Analytics() {
                         data={{
                           labels: ['Mangroves', 'Tropical Shrubs', 'Native Grasses', 'Canopy Trees'],
                           datasets: [{
-                            data: [45, 25, 20, 10],
+                            data: project?.project_type === 'biodiversity' ? [25, 40, 25, 10] : [55, 15, 10, 20],
                             backgroundColor: [
                               '#28a745', // green
                               '#1CAAD9', // blue
@@ -247,10 +272,11 @@ export default function Analytics() {
                           }
                         }}
                       />
-                      {/* Center Text overlay for Doughnut */}
                       <div style={{ position: 'absolute', top: '40%', left: '50%', transform: 'translate(-50%, -50%)', textAlign: 'center' }}>
                         <div style={{ fontSize: '12px', color: '#6b7280', textTransform: 'uppercase', letterSpacing: '1px' }}>Dominant</div>
-                        <div style={{ fontSize: '20px', fontWeight: 'bold', color: '#374151' }}>Mangroves</div>
+                        <div style={{ fontSize: '18px', fontWeight: 'bold', color: '#374151' }}>
+                          {project?.project_type === 'biodiversity' ? 'Tropical Shrubs' : 'Mangroves'}
+                        </div>
                       </div>
                     </div>
                   </div>
@@ -270,7 +296,7 @@ export default function Analytics() {
                           labels: ['Zone A (Coastal)', 'Zone B (Wetlands)', 'Zone C (Forest)', 'Zone D (Buffer)', 'Zone E (Nursery)'],
                           datasets: [{
                             label: 'Bio Score',
-                            data: [4.8, 4.2, 3.9, 3.1, 2.5],
+                            data: project?.project_type === 'carbon' ? [4.2, 3.8, 3.5, 2.9, 2.2] : [4.9, 4.5, 4.1, 3.8, 3.6],
                             backgroundColor: 'rgba(28, 170, 217, 0.85)',
                             borderRadius: 6,
                             barThickness: 24,

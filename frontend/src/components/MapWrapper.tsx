@@ -342,7 +342,7 @@ export default function MapWrapper({ projects = [], clickedProject = null, setCl
                 Close
               </button>
               <button 
-                onClick={() => window.location.href = '/analytics'}
+                onClick={() => window.location.href = `/analytics?projectId=${clickedProject.id}`}
                 style={{ padding: '8px 16px', border: 'none', background: '#111827', borderRadius: '8px', cursor: 'pointer', fontWeight: 600, color: '#fff', whiteSpace: 'nowrap' }}
               >
                 Full Analytics
