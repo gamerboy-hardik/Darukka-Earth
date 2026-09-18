@@ -570,13 +570,13 @@ function ProjectGridCard({ project, idx, setClickedProject, onEdit, onDelete }: 
       <div style={{ height: '140px', background: `url(${img}) center/cover`, position: 'relative' }}>
         <div style={{ padding: '12px', display: 'flex', justifyContent: 'space-between', alignItems: 'flex-start' }}>
           <div style={{ display: 'flex', gap: '8px' }}>
-            <button 
-              onClick={(e) => { e.stopPropagation(); onEdit(); }}
-              style={{ width: '28px', height: '28px', background: 'rgba(255, 255, 255, 0.9)', border: 'none', borderRadius: '50%', display: 'flex', alignItems: 'center', justifyContent: 'center', cursor: 'pointer', boxShadow: '0 2px 4px rgba(0,0,0,0.1)', color: '#3B82F6' }}
-              title="Edit Project Details"
-            >
-              <i className="fa fa-pencil" style={{ fontSize: '12px' }}></i>
-            </button>
+              <button 
+                onClick={(e) => { e.stopPropagation(); onEdit(); }}
+                style={{ width: '28px', height: '28px', background: 'rgba(255, 255, 255, 0.9)', border: 'none', borderRadius: '50%', display: 'flex', alignItems: 'center', justifyContent: 'center', cursor: 'pointer', boxShadow: '0 2px 4px rgba(0,0,0,0.1)', color: '#3B82F6' }}
+                title="Edit Project Details"
+              >
+                <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round"><path d="M12 20h9"></path><path d="M16.5 3.5a2.121 2.121 0 0 1 3 3L7 19l-4 1 1-4L16.5 3.5z"></path></svg>
+              </button>
             <button 
               onClick={(e) => { e.stopPropagation(); onDelete(); }}
               style={{ width: '28px', height: '28px', background: 'rgba(255, 255, 255, 0.9)', border: 'none', borderRadius: '50%', display: 'flex', alignItems: 'center', justifyContent: 'center', cursor: 'pointer', boxShadow: '0 2px 4px rgba(0,0,0,0.1)', color: '#EF4444' }}
@@ -650,7 +650,7 @@ function ProjectListCard({ project, idx, setClickedProject, onEdit, onDelete }: 
             style={{ width: '32px', height: '32px', background: '#EFF6FF', border: '1px solid #BFDBFE', borderRadius: '8px', display: 'flex', alignItems: 'center', justifyContent: 'center', cursor: 'pointer', color: '#3B82F6', transition: 'all 0.2s' }}
             title="Edit Project"
           >
-            <i className="fa fa-pencil" style={{ fontSize: '13px' }}></i>
+            <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round"><path d="M12 20h9"></path><path d="M16.5 3.5a2.121 2.121 0 0 1 3 3L7 19l-4 1 1-4L16.5 3.5z"></path></svg>
           </button>
           <button 
             onClick={(e) => { e.stopPropagation(); onDelete(); }}
