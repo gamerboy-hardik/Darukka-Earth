@@ -16,6 +16,7 @@ export default function Analytics() {
   const [searchParams] = useSearchParams();
   const projectId = searchParams.get('projectId');
   const [project, setProject] = useState<any>(null);
+  const [allProjects, setAllProjects] = useState<any[]>([]);
   const [metrics, setMetrics] = useState<any[]>([]);
   const [loading, setLoading] = useState(true);
   
@@ -29,6 +30,14 @@ export default function Analytics() {
 
   useEffect(() => {
     const loadData = async () => {
+      try {
+        const allRes = await fetchWithAuth('/api/projects/');
+        const allData = await allRes.json();
+        setAllProjects(allData);
+      } catch (e) {
+        console.error("Failed to fetch all projects", e);
+      }
+
       let pData = { id: 0, name: 'Global Ecosystem', project_type: 'mixed', latitude: 0, longitude: 0, description: '' };
       if (projectId) {
         try {
@@ -119,18 +128,60 @@ export default function Analytics() {
         </nav>
       </header>
 
-      <main className="container mt-4 pt-4 position-relative" style={{ zIndex: 10 }}>
-        <div className="d-flex justify-content-between align-items-center mb-4 d-print-none">
-          <div>
-            <h2 className="text-dark font-weight-bold mb-1"><i className="fa fa-chart-line mr-2" style={{ color: 'var(--primary)' }}></i> {project?.name || 'Ecosystem'} Analytics</h2>
-            {project?.project_type && (
-              <span className="badge badge-primary px-3 py-2 text-uppercase" style={{ fontSize: '12px', background: 'var(--primary)' }}>
-                {project.project_type} Project
-              </span>
-            )}
+      <style>
+        {`
+          @media print {
+            @page { size: A4 portrait; margin: 15mm; }
+            body { background-color: #fff !important; -webkit-print-color-adjust: exact; }
+            .ts-page-wrapper { background: #fff !important; }
+            .premium-card { box-shadow: none !important; border: 1px solid #e5e7eb !important; break-inside: avoid; }
+            .container-fluid { max-width: 100% !important; padding: 0 !important; }
+            .d-print-none { display: none !important; }
+            canvas { max-height: 250px !important; }
+          }
+        `}
+      </style>
+      <main className="container-fluid mt-4 pt-4 position-relative" style={{ zIndex: 10, maxWidth: '1400px' }}>
+        <div className="row">
+          <div className="col-md-3 d-print-none mb-4">
+            <h5 className="font-weight-bold text-dark mb-3">All Projects</h5>
+            <div className="list-group shadow-sm" style={{ borderRadius: '12px', overflow: 'hidden' }}>
+              <button 
+                onClick={() => window.location.href = '/analytics'}
+                className={`list-group-item list-group-item-action ${!projectId ? 'active' : ''}`}
+                style={!projectId ? { background: '#111827', borderColor: '#111827', color: '#fff' } : {}}
+              >
+                <strong>Global Ecosystem</strong>
+              </button>
+              {allProjects.map(p => (
+                <button 
+                  key={p.id}
+                  onClick={() => window.location.href = \`/analytics?projectId=\${p.id}\`}
+                  className={`list-group-item list-group-item-action ${projectId === String(p.id) ? 'active' : ''}`}
+                  style={projectId === String(p.id) ? { background: '#111827', borderColor: '#111827', color: '#fff' } : {}}
+                >
+                  <div className="d-flex justify-content-between align-items-center">
+                    <strong>{p.name}</strong>
+                    <span className="badge" style={{ background: projectId === String(p.id) ? '#374151' : '#e5e7eb', color: projectId === String(p.id) ? '#fff' : '#6B7280', fontSize: '10px' }}>
+                      {p.project_type}
+                    </span>
+                  </div>
+                </button>
+              ))}
+            </div>
           </div>
-          <button onClick={() => window.print()} className="btn btn-premium"><i className="fa fa-download mr-2"></i> Export PDF Report</button>
-        </div>
+          <div className="col-md-9">
+            <div className="d-flex justify-content-between align-items-center mb-4 d-print-none">
+              <div>
+                <h2 className="text-dark font-weight-bold mb-1"><i className="fa fa-chart-line mr-2" style={{ color: 'var(--primary)' }}></i> {project?.name || 'Ecosystem'} Analytics</h2>
+                {project?.project_type && (
+                  <span className="badge badge-primary px-3 py-2 text-uppercase" style={{ fontSize: '12px', background: 'var(--primary)' }}>
+                    {project.project_type} Project
+                  </span>
+                )}
+              </div>
+              <button onClick={() => window.print()} className="btn btn-premium"><i className="fa fa-download mr-2"></i> Export PDF Report</button>
+            </div>
 
         {loading ? (
           <div className="text-center p-5"><i className="fa fa-spinner fa-spin fa-3x" style={{ color: 'var(--primary)' }}></i></div>
@@ -334,11 +385,14 @@ export default function Analytics() {
                       ></iframe>
                     </div>
                   </div>
+                  </div>
                 </div>
               </div>
             </div>
+          </div>
           </>
         )}
+        </div>
       </main>
     </div>
   );

@@ -7,10 +7,11 @@ import {
   LinearScale,
   PointElement,
   LineElement,
+  ArcElement,
   Title,
   Tooltip as ChartTooltip,
 } from 'chart.js';
-import { Line } from 'react-chartjs-2';
+import { Line, Doughnut } from 'react-chartjs-2';
 import 'mapbox-gl/dist/mapbox-gl.css';
 
 ChartJS.register(
@@ -18,6 +19,7 @@ ChartJS.register(
   LinearScale,
   PointElement,
   LineElement,
+  ArcElement,
   Title,
   ChartTooltip
 );
@@ -285,27 +287,45 @@ export default function MapWrapper({ projects = [], clickedProject = null, setCl
                   {clickedProject.status.toUpperCase()}
                 </span>
               </div>
-              <p style={{ margin: 0, fontSize: '14px', color: '#4B5563', lineHeight: 1.6 }}>
-                {clickedProject.description}
+              <p style={{ margin: '0 0 16px 0', fontSize: '13px', color: '#4B5563', lineHeight: 1.5, display: '-webkit-box', WebkitLineClamp: 3, WebkitBoxOrient: 'vertical', overflow: 'hidden' }}>
+                {clickedProject.description || "No description provided."}
               </p>
+              
+              {/* KPIs */}
+              <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: '12px' }}>
+                <div style={{ padding: '12px', background: '#f8f9fa', borderRadius: '12px' }}>
+                  <div style={{ fontSize: '11px', color: '#6B7280', fontWeight: 600, textTransform: 'uppercase' }}>Total CO2e</div>
+                  <div style={{ fontSize: '18px', fontWeight: 800, color: '#1CAAD9' }}>
+                    {clickedProject.project_type === 'carbon' ? '14,205' : '3,142'} <span style={{ fontSize: '12px', fontWeight: 600, color: '#9CA3AF' }}>t</span>
+                  </div>
+                </div>
+                <div style={{ padding: '12px', background: '#f8f9fa', borderRadius: '12px' }}>
+                  <div style={{ fontSize: '11px', color: '#6B7280', fontWeight: 600, textTransform: 'uppercase' }}>Bio Score</div>
+                  <div style={{ fontSize: '18px', fontWeight: 800, color: '#10B981' }}>
+                    {clickedProject.project_type === 'biodiversity' ? '4.8' : '3.6'} <span style={{ fontSize: '12px', fontWeight: 600, color: '#9CA3AF' }}>/ 5</span>
+                  </div>
+                </div>
+              </div>
             </div>
             
             {/* Chart Area */}
-            <div style={{ flex: 1.5, minWidth: '300px', display: 'flex', flexDirection: 'column' }}>
-              <div style={{ fontSize: '13px', fontWeight: 700, color: '#374151', marginBottom: '8px' }}>Performance Over Time (CO2 Mitigated)</div>
-              <div style={{ flex: 1, minHeight: '150px', position: 'relative' }}>
+            <div style={{ flex: 1.2, minWidth: '220px', display: 'flex', flexDirection: 'column' }}>
+              <div style={{ fontSize: '13px', fontWeight: 700, color: '#374151', marginBottom: '8px' }}>Performance Trend</div>
+              <div style={{ flex: 1, minHeight: '120px', position: 'relative' }}>
                 <Line
                   data={{
                     labels: ['Jan', 'Feb', 'Mar', 'Apr', 'May', 'Jun'],
                     datasets: [
                       {
-                        label: 'tCO2e Mitigated',
-                        data: [1200, 1900, 2400, 3200, 4100, 5000],
+                        label: 'Metric',
+                        data: clickedProject.id ? 
+                          [10, 15, 22, 35, 48, 60].map(v => v + (clickedProject.id * 3)) : 
+                          [1200, 1900, 2400, 3200, 4100, 5000],
                         borderColor: '#1CAAD9',
                         backgroundColor: '#1CAAD9',
                         borderWidth: 3,
-                        pointRadius: 4,
-                        pointHoverRadius: 6,
+                        pointRadius: 0,
+                        pointHoverRadius: 4,
                         tension: 0.4
                       },
                     ],
@@ -315,19 +335,37 @@ export default function MapWrapper({ projects = [], clickedProject = null, setCl
                     maintainAspectRatio: false,
                     plugins: {
                       legend: { display: false },
-                      tooltip: {
-                        backgroundColor: 'rgba(255, 255, 255, 0.9)',
-                        titleColor: '#374151',
-                        bodyColor: '#374151',
-                        borderColor: '#e5e7eb',
-                        borderWidth: 1,
-                        padding: 10,
-                        displayColors: false,
-                      }
+                      tooltip: { enabled: true }
                     },
                     scales: {
-                      x: { grid: { display: false }, ticks: { color: '#6B7280', font: { size: 11 } }, border: { display: false } },
-                      y: { grid: { display: false }, ticks: { color: '#6B7280', font: { size: 11 } }, border: { display: false } }
+                      x: { display: false },
+                      y: { display: false }
+                    },
+                    layout: { padding: 0 }
+                  }}
+                />
+              </div>
+            </div>
+            
+            {/* Composition Area */}
+            <div style={{ flex: 1, minWidth: '150px', display: 'flex', flexDirection: 'column' }}>
+              <div style={{ fontSize: '13px', fontWeight: 700, color: '#374151', marginBottom: '8px' }}>Area Dist.</div>
+              <div style={{ flex: 1, minHeight: '120px', position: 'relative', display: 'flex', justifyContent: 'center' }}>
+                <Doughnut
+                  data={{
+                    labels: ['Forest', 'Water', 'Grass'],
+                    datasets: [{
+                      data: clickedProject.project_type === 'carbon' ? [60, 10, 30] : [40, 40, 20],
+                      backgroundColor: ['#10B981', '#1CAAD9', '#F59E0B'],
+                      borderWidth: 0,
+                      cutout: '70%'
+                    }]
+                  }}
+                  options={{
+                    responsive: true,
+                    maintainAspectRatio: false,
+                    plugins: {
+                      legend: { display: false },
                     }
                   }}
                 />
