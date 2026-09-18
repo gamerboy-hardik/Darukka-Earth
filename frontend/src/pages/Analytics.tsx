@@ -87,7 +87,7 @@ export default function Analytics() {
   }, []);
 
   const getGradient = (ctx: CanvasRenderingContext2D, chartArea: any) => {
-    if (!chartArea) return null;
+    if (!chartArea) return 'transparent';
     const gradient = ctx.createLinearGradient(0, chartArea.bottom, 0, chartArea.top);
     gradient.addColorStop(0, 'rgba(40, 167, 69, 0.05)');
     gradient.addColorStop(1, 'rgba(40, 167, 69, 0.4)');
@@ -186,7 +186,7 @@ export default function Analytics() {
                               backgroundColor: function(context: any) {
                                 const chart = context.chart;
                                 const {ctx, chartArea} = chart;
-                                if (!chartArea) return null;
+                                if (!chartArea) return 'transparent';
                                 return getGradient(ctx, chartArea);
                               },
                               borderWidth: 3,
