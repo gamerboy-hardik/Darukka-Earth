@@ -72,8 +72,14 @@ export default function Dashboard() {
         latitude: newProject.latitude ? parseFloat(newProject.latitude) : null,
         longitude: newProject.longitude ? parseFloat(newProject.longitude) : null,
       };
-      const res = await api.post('/projects/', payload);
-      setProjects([res.data, ...projects]);
+      
+      const res = await fetchWithAuth('/api/projects/', {
+        method: 'POST',
+        body: JSON.stringify(payload)
+      });
+      const data = await res.json();
+      
+      setProjects([data, ...projects]);
       setIsModalOpen(false);
       setNewProject({ name: '', description: '', project_type: 'carbon', latitude: '', longitude: '' });
     } catch (error) {
