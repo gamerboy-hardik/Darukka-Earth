@@ -17,23 +17,27 @@ def register(*, db: Session = Depends(deps.get_db), user_in: UserCreate):
     """
     Register a new user.
     """
-    user = db.query(User).filter(User.email == user_in.email).first()
-    if user:
-        raise HTTPException(
-            status_code=400,
-            detail="The user with this email already exists in the system.",
+    try:
+        user = db.query(User).filter(User.email == user_in.email).first()
+        if user:
+            raise HTTPException(
+                status_code=400,
+                detail="The user with this email already exists in the system.",
+            )
+        
+        hashed_password = security.get_password_hash(user_in.password)
+        user = User(
+            email=user_in.email,
+            full_name=user_in.full_name,
+            password_hash=hashed_password,
         )
-    
-    hashed_password = security.get_password_hash(user_in.password)
-    user = User(
-        email=user_in.email,
-        full_name=user_in.full_name,
-        password_hash=hashed_password,
-    )
-    db.add(user)
-    db.commit()
-    db.refresh(user)
-    return user
+        db.add(user)
+        db.commit()
+        db.refresh(user)
+        return user
+    except Exception as e:
+        import traceback
+        raise HTTPException(status_code=500, detail=f"{str(e)}\n{traceback.format_exc()}")
 
 @router.post("/login", response_model=Token)
 def login(
