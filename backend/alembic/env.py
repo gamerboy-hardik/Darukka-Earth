@@ -114,9 +114,10 @@ def run_migrations_online() -> None:
         poolclass=pool.NullPool,
     )
 
-    with connectable.connect() as connection:
+    with connectable.connect().execution_options(isolation_level="AUTOCOMMIT") as connection:
         connection.execute(text('CREATE EXTENSION IF NOT EXISTS postgis;'))
-        connection.commit()
+
+    with connectable.connect() as connection:
         
         context.configure(
             connection=connection, target_metadata=target_metadata,
