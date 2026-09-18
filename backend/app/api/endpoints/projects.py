@@ -43,6 +43,9 @@ def create_project(
         description=project_in.description,
         project_type=project_in.project_type,
         status=project_in.status,
+        latitude=project_in.latitude,
+        longitude=project_in.longitude,
+        boundary_geojson=project_in.boundary_geojson,
         owner_id=current_user.id,
     )
     db.add(project)
